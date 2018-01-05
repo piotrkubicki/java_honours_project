@@ -25,14 +25,14 @@ public class Individual {
 	public Individual() {
 		permutation = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Application.EVENTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
 			permutation.add(i);
 		}
 		
 		Collections.shuffle(permutation);
 		
 		// empty rooms
-		for (int i = 0; i < Application.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
@@ -45,13 +45,17 @@ public class Individual {
 		this.permutation = permutation;
 		
 		// empty rooms
-		for (int i = 0; i < Application.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
 		}
 				
 		evaluate();
+	}
+	
+	public List<Room> getRooms() {
+		return rooms;
 	}
 	
 	public int getClashes() {
@@ -90,7 +94,7 @@ public class Individual {
 	private void singleEvents() {
 		List<Integer> students = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			for (Room room : rooms) {
 				Event event = room.getSlot(i);
 				
@@ -101,7 +105,7 @@ public class Individual {
 				}
 			}
 			
-			if ((i + 1) % (Application.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
 				Set<Integer> set = new HashSet<Integer>(students);
 				
 				for (Integer s : set) {
@@ -115,7 +119,7 @@ public class Individual {
 				students = new ArrayList<Integer>();
 			}
 		}
-		System.out.println("Single: " + single);
+//		System.out.println("Single: " + single);
 	}
 	
 	// calculate students having events in last slot of the day
@@ -137,13 +141,13 @@ public class Individual {
 			
 			end += students.size();
 		}
-		System.out.println("End: " + end);
+//		System.out.println("End: " + end);
 	}
 	
 	private void moreThanThreeEvents() {
 		List<List<Integer>> students = new ArrayList<List<Integer>>();
 		
-		for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			List<Integer> subList = new ArrayList<Integer>();
 			
 			for (Room room : rooms) {
@@ -172,20 +176,20 @@ public class Individual {
 				students.remove(0);
 			}
 			
-			if ((i + 1) % (Application.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
 				students = new ArrayList<List<Integer>>();
 			}
 		}
-		System.out.println("Three: " + three);
+//		System.out.println("Three: " + three);
 	}
 	
 	public void createPhenotype() {
 		for (Integer eventId : permutation) {
-			Event event = Application.events.get(eventId);
+			Event event = Evolution.events.get(eventId);
 			boolean found = false;
 			
 			for (Room room : event.getSuitableRooms()) {
-				for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+				for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 //					System.out.println("Empty: " + (rooms.get(room.getId()).getSlot(i) == null) + " Clash: " + studentsNoClash(event, i, room.getId()));
 					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
 						rooms.get(room.getId()).setSlot(i, event);
@@ -204,7 +208,7 @@ public class Individual {
 			}
 		}
 		
-		System.out.println("Missed events: " + unplacedEvents.size());
+//		System.out.println("Missed events: " + unplacedEvents.size());
 	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
@@ -232,8 +236,8 @@ public class Individual {
 	public void saveSolution() {
 		Map solution = new HashMap<Integer, Integer[]>();
 		
-		for (int i = 0; i < Application.ROOMS_NUMBER; i++) {
-			for (int j = 0; j < Application.SLOTS_NUMBER; j++) {
+		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
+			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
 				Room room = rooms.get(i);
 				Event event = room.getSlot(j);
 				
@@ -247,9 +251,9 @@ public class Individual {
 		FileWriter fw = null;
 		
 		try {
-			fw = new FileWriter(Application.SOLUTION_FILENAME);
+			fw = new FileWriter(Evolution.SOLUTION_FILENAME);
 			
-			for (int i = 0; i < Application.EVENTS_NUMBER; i++) {
+			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
 				Integer[] pair = (Integer[]) solution.get(i);
 				
 				if (pair != null) {

@@ -9,7 +9,7 @@ public class SimpleMutation extends Operator {
 	public Individual run(List<Individual> individuals) {
 		List<Integer> permutation = individuals.get(0).getPermutation();
 		Random rand = new Random();
-		int max = Application.EVENTS_NUMBER;
+		int max = Evolution.EVENTS_NUMBER;
 		
 		int index1 = rand.nextInt(max);
 		int index2 = rand.nextInt(max);

@@ -8,7 +8,7 @@ public class SimpleSelect extends Operator {
 	@Override
 	public Individual run(List<Individual> individuals) {
 		Random rand = new Random();
-		int max = Application.POPULATION_SIZE;
+		int max = Evolution.POPULATION_SIZE;
 		
 		int index = rand.nextInt(max);
 		Individual ind1 = individuals.get(index);

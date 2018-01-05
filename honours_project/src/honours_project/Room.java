@@ -56,7 +56,7 @@ public class Room {
 	private void clearSlots() {
 		slots = new ArrayList<Event>();
 		
-		for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			slots.add(null);
 		}
 	}

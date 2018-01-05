@@ -9,7 +9,7 @@ public class SimpleCrossover extends Operator {
 	@Override
 	public Individual run(List<Individual> individuals) {
 		Random rand = new Random();
-		int max = Application.EVENTS_NUMBER - 10;
+		int max = Evolution.EVENTS_NUMBER - 10;
 		
 		int start = rand.nextInt(max);
 		
