@@ -142,6 +142,19 @@ public class Application {
 		System.out.println(ind1.getRoom(0).getSlots());
 		System.out.println(ind1.getClashes());
 		ind1.saveSolution();
+		
+		for (Event event : events) {
+			System.out.println("Event: " + event.getId() + " Students: " + event.getStudents().size());
+			
+			for (Room room : event.getSuitableRooms()) {
+				System.out.print(room.getId() + ", ");
+			}
+			System.out.println();
+		}
+		
+		for (Room room : rooms) {
+			System.out.println("ROOM: " + room.getId() + " Spaces: " + room.getSpaces());
+		}
 	}
 
 }

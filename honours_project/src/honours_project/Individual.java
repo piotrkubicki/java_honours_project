@@ -72,7 +72,7 @@ public class Individual {
 			for (Room room : event.getSuitableRooms()) {
 				for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
 //					System.out.println("Empty: " + (rooms.get(room.getId()).getSlot(i) == null) + " Clash: " + studentsNoClash(event, i, room.getId()));
-					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i, room.getId())) {
+					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
 						rooms.get(room.getId()).setSlot(i, event);
 						found = true;
 						break;
@@ -93,20 +93,18 @@ public class Individual {
 	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
-	private boolean studentsNoClash(Event event, int slot, int roomId) {
+	private boolean studentsNoClash(Event event, int slot) {
 		boolean feasible = true;
 		
 		for (Student student : event.getStudents()) {
 			for (Room room : rooms) {
-				if (room.getId() != roomId) {
-					Event slotEvent = room.getSlot(slot);
+				Event slotEvent = room.getSlot(slot);
 					
-					if (slotEvent != null) {
-						for (Student slotStudent : slotEvent.getStudents()) {
-							if (slotStudent.getStudentId() == student.getStudentId()) {
-								clash++;
-								feasible = false;
-							}
+				if (slotEvent != null) {
+					for (Student slotStudent : slotEvent.getStudents()) {
+						if (slotStudent.getStudentId() == student.getStudentId()) {
+							clash++;
+							feasible = false;
 						}
 					}
 				}

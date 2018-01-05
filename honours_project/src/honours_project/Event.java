@@ -10,8 +10,9 @@ public class Event {
 	
 	public Event(int eventId, List<Integer> features, List<Room> rooms, List<Student> students) {
 		this.eventId = eventId;
-		findRooms(features, rooms);
+		
 		setStudents(students);
+		findRooms(features, rooms);
 	}
 	
 	public int getId() {
