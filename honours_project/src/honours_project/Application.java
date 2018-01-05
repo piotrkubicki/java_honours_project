@@ -9,6 +9,7 @@ import java.util.List;
 public class Application {
 	public static final String FILENAME = "/home/pz/competition01.tim";
 	public static final String SOLUTION_FILENAME = "/home/pz/competition01.sln";
+	public static final int POPULATION_SIZE = 50;
 	public static int EVENTS_NUMBER;
 	public static int ROOMS_NUMBER;
 	public static int FEATURES_NUMBER;
@@ -136,25 +137,17 @@ public class Application {
 			e.printStackTrace();
 		}
 		
-		Individual ind1 = new Individual();
+		// EVOLUTION
 		
-		ind1.createPhenotype();
-		System.out.println(ind1.getRoom(0).getSlots());
-		System.out.println(ind1.getClashes());
-		ind1.saveSolution();
+//		List<Individual> population = new ArrayList<Individual>();
+//		
+//		for (int i = 0; i < POPULATION_SIZE; i++) {
+//			population.add(new Individual());
+//		}
 		
-		for (Event event : events) {
-			System.out.println("Event: " + event.getId() + " Students: " + event.getStudents().size());
-			
-			for (Room room : event.getSuitableRooms()) {
-				System.out.print(room.getId() + ", ");
-			}
-			System.out.println();
-		}
-		
-		for (Room room : rooms) {
-			System.out.println("ROOM: " + room.getId() + " Spaces: " + room.getSpaces());
-		}
+		Individual ind = new Individual();
+		ind.evaluate();
+		ind.saveSolution();
 	}
 
 }

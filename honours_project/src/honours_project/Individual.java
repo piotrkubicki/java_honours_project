@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Individual {
 	private List<Room> rooms = new ArrayList<Room>();
@@ -61,7 +64,102 @@ public class Individual {
 	}
 	
 	public void evaluate() {
+		createPhenotype();
+		singleEvents();
+		endOfDayEvents();
+		moreThanThreeEvents();
+	}
+	
+	private void singleEvents() {
+		List<Integer> students = new ArrayList<Integer>();
 		
+		for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+			for (Room room : rooms) {
+				Event event = room.getSlot(i);
+				
+				if (event != null) {
+					for (Student s : event.getStudents()) {
+						students.add(s.getStudentId());
+					}
+				}
+			}
+			
+			if ((i + 1) % (Application.ROOMS_NUMBER - 1) == 0 && i > 0) {
+				Set<Integer> set = new HashSet<Integer>(students);
+				
+				for (Integer s : set) {
+					long occ = students.stream().filter(p -> p.equals(s)).count();
+					
+					if (occ == 1) {
+						single++;
+					}
+				}
+				
+				students = new ArrayList<Integer>();
+			}
+		}
+		System.out.println("Single: " + single);
+	}
+	
+	// calculate students having events in last slot of the day
+	private void endOfDayEvents() {
+		for (int i = 1; i < 6; i++) {
+			int index = i * 9 - 1;
+			
+			List<Integer> students = new ArrayList<Integer>();
+			
+			for (Room room : rooms) {
+				Event event = room.getSlot(index);
+				
+				if (event != null) {
+					for (Student s : event.getStudents()) {
+						students.add(s.getStudentId());
+					}
+				}
+			}
+			
+			end += students.size();
+		}
+		System.out.println("End: " + end);
+	}
+	
+	private void moreThanThreeEvents() {
+		List<List<Integer>> students = new ArrayList<List<Integer>>();
+		
+		for (int i = 0; i < Application.SLOTS_NUMBER; i++) {
+			List<Integer> subList = new ArrayList<Integer>();
+			
+			for (Room room : rooms) {
+				Event event = room.getSlot(i);
+				
+				if (event != null) {
+					for (Student s : event.getStudents()) {
+						subList.add(s.getStudentId());
+					}
+				}
+			}
+			students.add(subList);
+			
+			if (students.size() == 3) {
+				List<Integer> flatten = students.stream().flatMap(List::stream).collect(Collectors.toList());
+				Set<Integer> set = new HashSet<Integer>(flatten);
+				
+				for (Integer s : set) {
+					long occ = flatten.stream().filter(p -> p.equals(s)).count();
+					
+					if (occ > 2) {
+						three++;
+					}
+				}
+				
+				students.remove(0);
+			}
+			
+			if ((i + 1) % (Application.ROOMS_NUMBER - 1) == 0 && i > 0) {
+				students = new ArrayList<List<Integer>>();
+			}
+		}
+		System.out.println("Three: " + three);
 	}
 	
 	public void createPhenotype() {
