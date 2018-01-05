@@ -139,15 +139,29 @@ public class Application {
 		
 		// EVOLUTION
 		
-//		List<Individual> population = new ArrayList<Individual>();
-//		
-//		for (int i = 0; i < POPULATION_SIZE; i++) {
-//			population.add(new Individual());
-//		}
+		List<Individual> population = new ArrayList<Individual>();
+		Operator selector = new SimpleSelect();
+		Operator crossover = new SimpleCrossover();
+		Operator mutator = new SimpleMutation();
 		
-		Individual ind = new Individual();
-		ind.evaluate();
-		ind.saveSolution();
+		for (int i = 0; i < POPULATION_SIZE; i++) {
+			population.add(new Individual());
+		}
+		
+		Individual parent1 = selector.run(population);
+		Individual parent2 = selector.run(population);
+
+		List<Individual> parents = new ArrayList<Individual>();
+		parents.add(parent1);
+		parents.add(parent2);
+		
+		Individual child = crossover.run(parents);
+		List<Individual> childs = new ArrayList<Individual>();
+		childs.add(child);
+		child = mutator.run(childs);
+		
+		System.out.println("Parent1: " + parent1.getFitness() + " Parent2: " + parent2.getFitness() + " Child: " + child.getFitness());
+		child.saveSolution();
 	}
 
 }

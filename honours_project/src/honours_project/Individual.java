@@ -37,6 +37,21 @@ public class Individual {
 			
 			rooms.add(room);
 		}
+		
+		evaluate();
+	}
+	
+	public Individual(List<Integer> permutation) {
+		this.permutation = permutation;
+		
+		// empty rooms
+		for (int i = 0; i < Application.ROOMS_NUMBER; i++) {
+			Room room = new Room();
+			
+			rooms.add(room);
+		}
+				
+		evaluate();
 	}
 	
 	public int getClashes() {
@@ -68,6 +83,8 @@ public class Individual {
 		singleEvents();
 		endOfDayEvents();
 		moreThanThreeEvents();
+		
+		fitness = single + end + three;
 	}
 	
 	private void singleEvents() {
@@ -252,6 +269,24 @@ public class Individual {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public int unplacedEventsNumber() {
+		return unplacedEvents.size();
+	}
+	
+	public boolean isBetter(Individual other) {
+		if (unplacedEventsNumber() < other.unplacedEventsNumber()) {
+			return true;
+		} else if (unplacedEventsNumber() > other.unplacedEventsNumber()) {
+			return false;
+		} else {
+			if (getFitness() <= other.getFitness()) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 	}
