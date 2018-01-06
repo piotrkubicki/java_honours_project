@@ -209,6 +209,7 @@ public class Evolution extends Observable implements Runnable {
 		running = true;
 		population = new ArrayList<Individual>();
 		generation = 0;
+		best = null;
 		
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			population.add(new Individual());
