@@ -1,6 +1,7 @@
 package honours_project;
 
 public class EnglishLanguage extends Language {
+	// FIELDS
 	public static final String RUN = "Run";
 	public static final String STOP = "Stop";
 	public static final String RUNS = "Runs";
@@ -13,6 +14,7 @@ public class EnglishLanguage extends Language {
 	public static final String SAVE = "Save";
 	public static final String TITLE = "EA Timetabling";
 	public static final String POPULATION_SIZE = "Popilation size";
+	public static final String GENERATION = "Generation";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
@@ -98,5 +100,10 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getNoNumberError() {
 		return NO_NUMBER_ERROR;
+	}
+
+	@Override
+	public String getGeneration() {
+		return GENERATION;
 	}
 }

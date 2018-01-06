@@ -47,6 +47,7 @@ public class Evolution extends Observable implements Runnable {
 	private boolean progressEvolution;
 	
 	private long TIME_PER_RUN;
+	private int generation;
 	
 	boolean running = true;
 	
@@ -65,6 +66,10 @@ public class Evolution extends Observable implements Runnable {
 	
 	public void setPopulatinoSize(int size) {
 		POPULATION_SIZE = size;
+	}
+	
+	public int getGeneration() {
+		return generation;
 	}
 	
 	public void attach(Observer observer) {
@@ -203,6 +208,7 @@ public class Evolution extends Observable implements Runnable {
 		
 		running = true;
 		population = new ArrayList<Individual>();
+		generation = 0;
 		
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			population.add(new Individual());
@@ -237,6 +243,8 @@ public class Evolution extends Observable implements Runnable {
 			
 			insertion.run(population);
 			best = findBest.run(population);
+			
+			generation++;
 			
 			notifyAllObservers();
 		}

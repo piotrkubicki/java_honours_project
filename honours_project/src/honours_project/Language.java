@@ -2,7 +2,7 @@ package honours_project;
 
 public abstract class Language {
 	
-	
+	// FIELDS
 	public abstract String getRun();
 	public abstract String getStop();
 	public abstract String getRuns();
@@ -15,6 +15,7 @@ public abstract class Language {
 	public abstract String getSave();
 	public abstract String getTitle();
 	public abstract String getPopulationSize();
+	public abstract String getGeneration();
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();

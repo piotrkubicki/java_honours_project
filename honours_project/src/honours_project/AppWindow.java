@@ -62,6 +62,8 @@ public class AppWindow extends JFrame implements Observer {
 	private JLabel logoLabel;
 	private JLabel populationSizeLabel;
 	private JTextField populationSizeTextField;
+	private JLabel generationLabel;
+	private JLabel generationTxt;
 
 	/**
 	 * Create the frame.
@@ -247,6 +249,12 @@ public class AppWindow extends JFrame implements Observer {
 		endTxt = new JLabel("0");
 		middlePanel.add(endTxt);
 		
+		generationLabel = new JLabel(language.getGeneration() + ":");
+		middlePanel.add(generationLabel);
+		
+		generationTxt = new JLabel("0");
+		middlePanel.add(generationTxt);
+		
 		rightPanel = new JPanel();
 		rightPanel.setBorder(new EmptyBorder(0, 100, 0, 0));
 		panel.add(rightPanel);
@@ -374,5 +382,6 @@ public class AppWindow extends JFrame implements Observer {
 		singleTxt.setText(Integer.toString(best.getSingle()));
 		threeTxt.setText(Integer.toString(best.getThree()));
 		endTxt.setText(Integer.toString(best.getEnd()));
+		generationTxt.setText(Integer.toString(evolution.getGeneration()));
 	}
 }
