@@ -12,8 +12,8 @@ public class Evolution extends Observable implements Runnable {
 	
 	private List<Observer> observers = new ArrayList<Observer>();
 	
-	public static final String FILENAME = "/home/pz/competition01.tim";
-	public static final String SOLUTION_FILENAME = "/home/pz/competition01.sln";
+	public static String filename = "";
+	
 	public static final int POPULATION_SIZE = 50;
 	public static int EVENTS_NUMBER;
 	public static int ROOMS_NUMBER;
@@ -34,7 +34,7 @@ public class Evolution extends Observable implements Runnable {
 	public static List<Event> events = new ArrayList<Event>();
 	public static List<Student> students = new ArrayList<Student>();
 
-	private List<Individual> population = new ArrayList<Individual>();
+	private List<Individual> population;
 	private Operator selector;
 	private Operator crossover;
 	private Operator mutator;
@@ -47,7 +47,8 @@ public class Evolution extends Observable implements Runnable {
 	private boolean progressEvolution;
 	
 	private long TIME_PER_RUN;
-	private int NO_UPDATE;
+	
+	boolean running = true;
 	
 	public Evolution() {
 		population = new ArrayList<Individual>();
@@ -56,9 +57,10 @@ public class Evolution extends Observable implements Runnable {
 		mutator = new SimpleMutation();
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
-		
-		prepareData();
-		
+	}
+	
+	public void setFile(String filename) {
+		this.filename = filename;
 	}
 	
 	public void attach(Observer observer) {
@@ -76,7 +78,7 @@ public class Evolution extends Observable implements Runnable {
 		FileReader fr = null;
 		
 		try {
-			fr = new FileReader(FILENAME);
+			fr = new FileReader(filename);
 			br = new BufferedReader(fr);
 			
 			String line;
@@ -180,12 +182,25 @@ public class Evolution extends Observable implements Runnable {
 		}
 	}
 	
+	public void stopEvolution() {
+		running = false;
+	}
+	
+	public void saveSolution(String filename) {
+		best.saveSolution(filename);
+	}
+	
 	public void run() {
+		prepareData();
+		
+		running = true;
+		population = new ArrayList<Individual>();
+		
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			population.add(new Individual());
 		}
 		
-		for (int i = 0; i < 3000; i++) {
+		while (running) {
 			Individual parent1 = selector.run(population);
 			Individual parent2 = selector.run(population);
 
@@ -201,9 +216,7 @@ public class Evolution extends Observable implements Runnable {
 			insertion.run(population);
 			best = findBest.run(population);
 			
-//			System.out.println("Best: " + best.getFitness() + " Missed events: " + best.unplacedEventsNumber());
 			notifyAllObservers();
 		}
-		best.saveSolution();
 	}
 }

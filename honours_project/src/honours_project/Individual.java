@@ -58,6 +58,18 @@ public class Individual {
 		return rooms;
 	}
 	
+	public int getEnd() {
+		return end;
+	}
+
+	public int getSingle() {
+		return single;
+	}
+
+	public int getThree() {
+		return three;
+	}
+
 	public int getClashes() {
 		return clash;
 	}
@@ -233,7 +245,7 @@ public class Individual {
 		return feasible;
 	}
 	
-	public void saveSolution() {
+	public void saveSolution(String filename) {
 		Map solution = new HashMap<Integer, Integer[]>();
 		
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
@@ -251,7 +263,7 @@ public class Individual {
 		FileWriter fw = null;
 		
 		try {
-			fw = new FileWriter(Evolution.SOLUTION_FILENAME);
+			fw = new FileWriter(filename);
 			
 			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
 				Integer[] pair = (Integer[]) solution.get(i);
