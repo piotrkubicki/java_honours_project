@@ -14,6 +14,7 @@ public abstract class Language {
 	public abstract String getLoadFile();
 	public abstract String getSave();
 	public abstract String getTitle();
+	public abstract String getPopulationSize();
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();
@@ -21,4 +22,5 @@ public abstract class Language {
 	//MESSAGES BODY
 	public abstract String getNoFileError();
 	public abstract String getBestError();
+	public abstract String getNoNumberError();
 }

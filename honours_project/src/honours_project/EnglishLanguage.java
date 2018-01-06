@@ -12,6 +12,7 @@ public class EnglishLanguage extends Language {
 	public static final String LOAD_FILE = "Load file";
 	public static final String SAVE = "Save";
 	public static final String TITLE = "EA Timetabling";
+	public static final String POPULATION_SIZE = "Popilation size";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
@@ -19,6 +20,7 @@ public class EnglishLanguage extends Language {
 	// MESSAGE BODY
 	public static final String NO_FILE_ERROR = "Please select problem file!";
 	public static final String BEST_ERROR = "Please run program to find solution!";
+	public static final String NO_NUMBER_ERROR = "Please provide number value!";
 	
 	public String getRun() {
 		return RUN;
@@ -86,5 +88,15 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getBestError() {
 		return BEST_ERROR;
+	}
+	
+	@Override
+	public String getPopulationSize() {
+		return POPULATION_SIZE;
+	}
+
+	@Override
+	public String getNoNumberError() {
+		return NO_NUMBER_ERROR;
 	}
 }

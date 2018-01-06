@@ -14,7 +14,7 @@ public class Evolution extends Observable implements Runnable {
 	
 	public static String filename = "";
 	
-	public static final int POPULATION_SIZE = 50;
+	public static int POPULATION_SIZE = 0;
 	public static int EVENTS_NUMBER;
 	public static int ROOMS_NUMBER;
 	public static int FEATURES_NUMBER;
@@ -60,7 +60,11 @@ public class Evolution extends Observable implements Runnable {
 	}
 	
 	public void setFile(String filename) {
-		this.filename = filename;
+		Evolution.filename = filename;
+	}
+	
+	public void setPopulatinoSize(int size) {
+		POPULATION_SIZE = size;
 	}
 	
 	public void attach(Observer observer) {

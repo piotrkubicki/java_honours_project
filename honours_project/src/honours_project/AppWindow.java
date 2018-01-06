@@ -60,6 +60,8 @@ public class AppWindow extends JFrame implements Observer {
 	private JButton saveButton;
 	private JPanel rightPanel;
 	private JLabel logoLabel;
+	private JLabel populationSizeLabel;
+	private JTextField populationSizeTextField;
 
 	/**
 	 * Create the frame.
@@ -149,19 +151,26 @@ public class AppWindow extends JFrame implements Observer {
 		leftPanel.add(panel_4);
 		panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		constraintLabel = new JLabel(language.getRun());
+		constraintLabel = new JLabel(language.getRun() + ":");
 		panel_4.add(constraintLabel);
 		
 		constraintTextField = new JTextField();
 		panel_4.add(constraintTextField);
 		constraintTextField.setColumns(10);
 		
-		runsLabel = new JLabel(language.getRuns());
+		runsLabel = new JLabel(language.getRuns() + ":");
 		panel_4.add(runsLabel);
 		
 		runsTextField = new JTextField();
 		panel_4.add(runsTextField);
 		runsTextField.setColumns(10);
+		
+		populationSizeLabel = new JLabel(language.getPopulationSize() + ":");
+		panel_4.add(populationSizeLabel);
+		
+		populationSizeTextField = new JTextField();
+		panel_4.add(populationSizeTextField);
+		populationSizeTextField.setColumns(10);
 		
 		panel_6 = new JPanel();
 		panel_6.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -173,9 +182,22 @@ public class AppWindow extends JFrame implements Observer {
 		startButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				boolean valid = true;
 				String filename = loadFileTextField.getText();
 				
-				if (filename.length() > 0) {
+				try {
+					evolution.setPopulatinoSize(Integer.parseInt(populationSizeTextField.getText()));
+				} catch (NumberFormatException ec) {
+					JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+					valid = false;
+				}		
+				
+				if (filename.length() < 1) {
+					JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+					valid = false;
+				}
+
+				if (valid) {
 					evolution.setFile(filename);
 					
 					if (startButton.getText() == language.getRun()) {
@@ -186,8 +208,6 @@ public class AppWindow extends JFrame implements Observer {
 						startButton.setText(language.getRun());
 						evolution.stopEvolution();
 					}
-				} else {
-					JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
