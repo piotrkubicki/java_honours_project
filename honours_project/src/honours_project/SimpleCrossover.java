@@ -6,10 +6,16 @@ import java.util.Random;
 
 public class SimpleCrossover extends Operator {
 
+	private int combinationLength;
+	
+	public SimpleCrossover(int combinationLength) {
+		this.combinationLength = combinationLength;
+	}
+	
 	@Override
 	public Individual run(List<Individual> individuals) {
 		Random rand = new Random();
-		int max = Evolution.EVENTS_NUMBER - 10;
+		int max = Evolution.EVENTS_NUMBER - combinationLength;
 		
 		int start = rand.nextInt(max);
 		
@@ -21,13 +27,13 @@ public class SimpleCrossover extends Operator {
 		
 		List<Integer> secondPermutation = parent2.getPermutation();
 		
-		for (int i = start; i < (start + 10); i++) {
+		for (int i = start; i < (start + combinationLength); i++) {
 			insertion.add(secondPermutation.get(i));
 		}
 		
 		permutation.removeAll(insertion);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < combinationLength; i++) {
 			int ins = insertion.get(i);
 			permutation.add(start + i, ins);
 		}

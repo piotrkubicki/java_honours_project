@@ -2,6 +2,8 @@ package honours_project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Event {
 	private int eventId;
@@ -26,10 +28,13 @@ public class Event {
 	public List<Student> getStudents() {
 		return students;
 	}
-
+	
 	private void findRooms(List<Integer> features, List<Room> rooms) {
+		TreeMap<Integer, Room> temp = new TreeMap<Integer, Room>();
+		
 		for (Room room : rooms) {
 			boolean feasible = true;
+			int ff = 0;
 			
 			if (room.getSpaces() < students.size()) {
 				feasible = false;
@@ -40,12 +45,20 @@ public class Event {
 						feasible = false;
 						break;
 					}
+					
+					if (features.get(i) == 0 && roomFeatures.get(i) == 1) {
+						ff++;
+					}
 				}
 			}
 			
 			if (feasible) {
-				suitableRooms.add(room);
+				temp.put(ff, room);
 			}
+		}
+		
+		for (Map.Entry<Integer, Room> entry : temp.entrySet()) {
+			suitableRooms.add(entry.getValue());
 		}
 	}
 	

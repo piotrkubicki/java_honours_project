@@ -54,8 +54,8 @@ public class Evolution extends Observable implements Runnable {
 	public Evolution() {
 		population = new ArrayList<Individual>();
 		selector = new SimpleSelect();
-		crossover = new SimpleCrossover();
-		mutator = new SimpleMutation();
+		crossover = new SimpleCrossover(15);
+		mutator = new BetterMutation(0.9F);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
@@ -243,7 +243,7 @@ public class Evolution extends Observable implements Runnable {
 			
 			insertion.run(population);
 			best = findBest.run(population);
-			
+			System.out.println("Child1: " + child.getFitness() + " " + child.unplacedEventsNumber() + " Child2: " + child2.getFitness() + " " + child2.unplacedEventsNumber());
 			generation++;
 			
 			notifyAllObservers();
