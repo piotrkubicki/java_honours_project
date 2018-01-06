@@ -214,7 +214,7 @@ public class AppWindow extends JFrame implements Observer {
 		rightPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		
 		logoLabel = new JLabel();
-		logoLabel.setIcon(new ImageIcon("/home/pz/Downloads/logo.png"));
+		logoLabel.setIcon(new ImageIcon("src/logo.png"));
 		rightPanel.add(logoLabel);
 		
 		JScrollPane scrollPane = new JScrollPane();
