@@ -14,4 +14,11 @@ public abstract class Language {
 	public abstract String getLoadFile();
 	public abstract String getSave();
 	public abstract String getTitle();
+	
+	// MESSAGES TITLES
+	public abstract String getErrorTitle();
+	
+	//MESSAGES BODY
+	public abstract String getNoFileError();
+	public abstract String getBestError();
 }

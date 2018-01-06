@@ -13,6 +13,13 @@ public class EnglishLanguage extends Language {
 	public static final String SAVE = "Save";
 	public static final String TITLE = "EA Timetabling";
 	
+	// MESSAGE TITLES
+	public static final String ERROR_MESSAGE_TITLE = "Error";
+	
+	// MESSAGE BODY
+	public static final String NO_FILE_ERROR = "Please select problem file!";
+	public static final String BEST_ERROR = "Please run program to find solution!";
+	
 	public String getRun() {
 		return RUN;
 	}
@@ -64,5 +71,20 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getTitle() {
 		return TITLE;
+	}
+
+	@Override
+	public String getErrorTitle() {
+		return ERROR_MESSAGE_TITLE;
+	}
+
+	@Override
+	public String getNoFileError() {
+		return NO_FILE_ERROR;
+	}
+
+	@Override
+	public String getBestError() {
+		return BEST_ERROR;
 	}
 }

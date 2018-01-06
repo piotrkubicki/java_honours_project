@@ -16,12 +16,15 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class AppWindow extends JFrame implements Observer {
 	private Evolution evolution;
@@ -92,6 +95,7 @@ public class AppWindow extends JFrame implements Observer {
 		leftPanel.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		panel_3 = new JPanel();
+		panel_3.setBorder(new EmptyBorder(10, 10, 10, 10));
 		leftPanel.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -116,10 +120,32 @@ public class AppWindow extends JFrame implements Observer {
 		panel_3.add(loadFileButton);
 		
 		panel_5 = new JPanel();
+		panel_5.setBorder(new EmptyBorder(10, 10, 10, 10));
 		leftPanel.add(panel_5);
-		panel_5.setLayout(new GridLayout(2, 0, 0, 0));
+		panel_5.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		saveButton = new JButton(language.getSave());
+		panel_5.add(saveButton);
+		saveButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (evolution.bestExists()) {
+					JFileChooser saveFile = new JFileChooser();
+					int rVal = saveFile.showSaveDialog(AppWindow.this);
+					
+					if (rVal == JFileChooser.APPROVE_OPTION) {
+						String filename = saveFile.getSelectedFile().getName();
+						String dir = saveFile.getCurrentDirectory().toString();
+						evolution.saveSolution(dir + "/" + filename);
+					}
+				} else {
+					JOptionPane.showMessageDialog(AppWindow.this, language.getBestError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		
 		panel_4 = new JPanel();
+		panel_4.setBorder(new EmptyBorder(10, 10, 10, 10));
 		leftPanel.add(panel_4);
 		panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 		
@@ -138,6 +164,7 @@ public class AppWindow extends JFrame implements Observer {
 		runsTextField.setColumns(10);
 		
 		panel_6 = new JPanel();
+		panel_6.setBorder(new EmptyBorder(10, 10, 10, 10));
 		leftPanel.add(panel_6);
 		panel_6.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -146,20 +173,27 @@ public class AppWindow extends JFrame implements Observer {
 		startButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				evolution.setFile(loadFileTextField.getText());
+				String filename = loadFileTextField.getText();
 				
-				if (startButton.getText() == language.getRun()) {
-					startButton.setText(language.getStop());
-					Thread evolve = new Thread(evolution);
-					evolve.start();
-				} else if (startButton.getText() == language.getStop()) {
-					startButton.setText(language.getRun());
-					evolution.stopEvolution();
+				if (filename.length() > 0) {
+					evolution.setFile(filename);
+					
+					if (startButton.getText() == language.getRun()) {
+						startButton.setText(language.getStop());
+						Thread evolve = new Thread(evolution);
+						evolve.start();
+					} else if (startButton.getText() == language.getStop()) {
+						startButton.setText(language.getRun());
+						evolution.stopEvolution();
+					}
+				} else {
+					JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		
 		middlePanel = new JPanel();
+		middlePanel.setBorder(new EmptyBorder(0, 10, 0, 0));
 		panel.add(middlePanel);
 		middlePanel.setLayout(new GridLayout(0, 4, 0, 0));
 		
@@ -193,23 +227,8 @@ public class AppWindow extends JFrame implements Observer {
 		endTxt = new JLabel("0");
 		middlePanel.add(endTxt);
 		
-		saveButton = new JButton(language.getSave());
-		saveButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JFileChooser saveFile = new JFileChooser();
-				int rVal = saveFile.showSaveDialog(AppWindow.this);
-				
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					String filename = saveFile.getSelectedFile().getName();
-					String dir = saveFile.getCurrentDirectory().toString();
-					evolution.saveSolution(dir + "/" + filename);
-				}
-			}
-		});
-		middlePanel.add(saveButton);
-		
 		rightPanel = new JPanel();
+		rightPanel.setBorder(new EmptyBorder(0, 100, 0, 0));
 		panel.add(rightPanel);
 		rightPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		

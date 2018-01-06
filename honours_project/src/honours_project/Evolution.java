@@ -190,6 +190,10 @@ public class Evolution extends Observable implements Runnable {
 		best.saveSolution(filename);
 	}
 	
+	public boolean bestExists() {
+		return (best != null);
+	}
+	
 	public void run() {
 		prepareData();
 		
@@ -208,11 +212,25 @@ public class Evolution extends Observable implements Runnable {
 			parents.add(parent1);
 			parents.add(parent2);
 			
-			Individual child = crossover.run(parents);
 			List<Individual> childs = new ArrayList<Individual>();
+			
+			Individual child = crossover.run(parents);
 			childs.add(child);
 			child = mutator.run(childs);
 			population.add(child);
+			
+			// second child
+			parents = new ArrayList<Individual>();
+			parents.add(parent2);
+			parents.add(parent1);
+			
+			childs = new ArrayList<Individual>();
+			
+			Individual child2 = crossover.run(parents);
+			childs.add(child2);
+			child2 = mutator.run(childs);
+			population.add(child2);
+			
 			insertion.run(population);
 			best = findBest.run(population);
 			
