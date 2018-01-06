@@ -64,6 +64,7 @@ public class AppWindow extends JFrame implements Observer {
 	private JTextField populationSizeTextField;
 	private JLabel generationLabel;
 	private JLabel generationTxt;
+	private JPanel bottomPanel;
 
 	/**
 	 * Create the frame.
@@ -77,21 +78,11 @@ public class AppWindow extends JFrame implements Observer {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
 		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{1400, 0};
-		gbl_contentPane.rowHeights = new int[]{185, 185, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
 		pack();
+		contentPane.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		panel = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		contentPane.add(panel, gbc_panel);
+		contentPane.add(panel);
 		panel.setLayout(new GridLayout(0, 3, 0, 0));
 		
 		leftPanel = new JPanel();
@@ -263,17 +254,6 @@ public class AppWindow extends JFrame implements Observer {
 		logoLabel = new JLabel();
 		logoLabel.setIcon(new ImageIcon("src/logo.png"));
 		rightPanel.add(logoLabel);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setPreferredSize(new Dimension(1200, 185));
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.anchor = GridBagConstraints.NORTH;
-		gbc_scrollPane.fill = GridBagConstraints.HORIZONTAL;
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 1;
-		contentPane.add(scrollPane, gbc_scrollPane);
-		table = new JTable();
-		scrollPane.setViewportView(table);
 		timetableModel = new DefaultTableModel(
 				new Object[][] {
 					{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
@@ -298,6 +278,17 @@ public class AppWindow extends JFrame implements Observer {
 					return columnEditables[column];
 				}
 			};
+		
+		bottomPanel = new JPanel();
+		bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPane.add(bottomPanel);
+		bottomPanel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		bottomPanel.add(scrollPane);
+		scrollPane.setPreferredSize(new Dimension(1200, 182));
+		table = new JTable();
+		scrollPane.setViewportView(table);
 		table.setModel(timetableModel);
 		table.getColumnModel().getColumn(0).setResizable(false);
 		table.getColumnModel().getColumn(1).setResizable(false);

@@ -14,7 +14,7 @@ public class Event {
 		this.eventId = eventId;
 		
 		setStudents(students);
-		findRooms(features, rooms);
+		findRooms2(features, rooms);
 	}
 	
 	public int getId() {
@@ -53,6 +53,43 @@ public class Event {
 			}
 			
 			if (feasible) {
+				temp.put(ff, room);
+			}
+		}
+		
+		for (Map.Entry<Integer, Room> entry : temp.entrySet()) {
+			suitableRooms.add(entry.getValue());
+		}
+	}
+	
+	private void findRooms2(List<Integer> features, List<Room> rooms) {
+		TreeMap<Integer, Room> temp = new TreeMap<Integer, Room>();
+		
+		for (Room room : rooms) {
+			boolean feasible = true;
+			int ff = 0;
+			
+			if (room.getSpaces() < students.size()) {
+				feasible = false;
+			} else {
+				for (int i = 0; i < Evolution.FEATURES_NUMBER; i++) {
+					List<Integer> roomFeatures = room.getFeatures();
+					if (features.get(i) == 1 && roomFeatures.get(i) == 0) {
+						feasible = false;
+						break;
+					}
+					
+					if (features.get(i) == 0 && roomFeatures.get(i) == 1) {
+						ff++;
+					}
+				}
+			}
+			
+			if (feasible) {
+				while (temp.containsKey(ff)) {
+					ff++;
+				} 
+				
 				temp.put(ff, room);
 			}
 		}
