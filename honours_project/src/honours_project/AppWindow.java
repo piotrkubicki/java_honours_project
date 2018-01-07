@@ -1,12 +1,10 @@
 package honours_project;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -23,8 +21,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
 
 public class AppWindow extends JFrame implements Observer {
 	private Evolution evolution;
@@ -252,7 +248,8 @@ public class AppWindow extends JFrame implements Observer {
 		rightPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		
 		logoLabel = new JLabel();
-		logoLabel.setIcon(new ImageIcon("src/logo.png"));
+		URL logoURL = getClass().getResource("/logo.png");
+		logoLabel.setIcon(new ImageIcon(logoURL));
 		rightPanel.add(logoLabel);
 		timetableModel = new DefaultTableModel(
 				new Object[][] {
