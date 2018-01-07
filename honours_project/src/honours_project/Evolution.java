@@ -21,18 +21,18 @@ public class Evolution extends Observable implements Runnable {
 	public static int STUDENTS_NUMBER;
 	public static int SLOTS_NUMBER = 45;
 	
-	public static List<Integer> roomsSizes = new ArrayList<Integer>();
-	public static List<Integer> studentsData = new ArrayList<Integer>();
-	public static List<Integer> roomsData = new ArrayList<Integer>();
-	public static List<Integer> eventsData = new ArrayList<Integer>();
+	public static List<Integer> roomsSizes;
+	public static List<Integer> studentsData;
+	public static List<Integer> roomsData;
+	public static List<Integer> eventsData;
 	
-	public static List<List<Integer>> studentsEvents = new ArrayList<List<Integer>>();
-	public static List<List<Integer>> roomsFeatures = new ArrayList<List<Integer>>();
-	public static List<List<Integer>> eventsFeatures = new ArrayList<List<Integer>>();
+	public static List<List<Integer>> studentsEvents;
+	public static List<List<Integer>> roomsFeatures;
+	public static List<List<Integer>> eventsFeatures;
 	
-	public static List<Room> rooms = new ArrayList<Room>();
-	public static List<Event> events = new ArrayList<Event>();
-	public static List<Student> students = new ArrayList<Student>();
+	public static List<Room> rooms;
+	public static List<Event> events;
+	public static List<Student> students;
 
 	private List<Individual> population;
 	private Operator selector;
@@ -54,8 +54,8 @@ public class Evolution extends Observable implements Runnable {
 	public Evolution() {
 		population = new ArrayList<Individual>();
 		selector = new SimpleSelect();
-		crossover = new SimpleCrossover(15);
-		mutator = new BetterMutation(0.9F);
+		crossover = new SimpleCrossover(10);
+		mutator = new SimpleMutation();
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
@@ -83,6 +83,20 @@ public class Evolution extends Observable implements Runnable {
 	}
 	
 	private void prepareData() {
+		roomsSizes = new ArrayList<Integer>();
+		studentsData = new ArrayList<Integer>();
+		roomsData = new ArrayList<Integer>();
+		eventsData = new ArrayList<Integer>();
+		
+		studentsEvents = new ArrayList<List<Integer>>();
+		roomsFeatures = new ArrayList<List<Integer>>();
+		eventsFeatures = new ArrayList<List<Integer>>();
+		
+		rooms = new ArrayList<Room>();
+		events = new ArrayList<Event>();
+		students = new ArrayList<Student>();
+
+		
 		BufferedReader br = null;
 		FileReader fr = null;
 		
@@ -225,11 +239,11 @@ public class Evolution extends Observable implements Runnable {
 			
 			List<Individual> childs = new ArrayList<Individual>();
 			
-			Individual child = crossover.run(parents);
-			childs.add(child);
-			child = mutator.run(childs);
-			population.add(child);
-			
+//			Individual child = crossover.run(parents);
+			childs.add(crossover.run(parents));
+			mutator.run(childs);
+			population.add(childs.get(0));
+			Individual child = childs.remove(0);
 			// second child
 			parents = new ArrayList<Individual>();
 			parents.add(parent2);
@@ -237,16 +251,20 @@ public class Evolution extends Observable implements Runnable {
 			
 			childs = new ArrayList<Individual>();
 			
-			Individual child2 = crossover.run(parents);
-			childs.add(child2);
-			child2 = mutator.run(childs);
-			population.add(child2);
-			
+//			Individual child2 = crossover.run(parents);
+			childs.add(crossover.run(parents));
+			mutator.run(childs);
+			population.add(childs.get(0));
+			Individual child2 = childs.remove(0);
 			insertion.run(population);
 			best = findBest.run(population);
-			System.out.println("Child1: " + child.getFitness() + " " + child.unplacedEventsNumber() + " Child2: " + child2.getFitness() + " " + child2.unplacedEventsNumber());
+//			System.out.println("Child1: " + child.getFitness() + " " + child.unplacedEventsNumber() + " Child2: " + child2.getFitness() + " " + child2.unplacedEventsNumber());
 			generation++;
 			
+			
+//			for (Individual i : population) {
+//				System.out.println(i.getFitness()  + " " + i.unplacedEventsNumber());
+//			}
 			notifyAllObservers();
 		}
 	}
