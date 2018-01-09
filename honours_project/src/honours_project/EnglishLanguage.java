@@ -15,6 +15,9 @@ public class EnglishLanguage extends Language {
 	public static final String TITLE = "EA Timetabling";
 	public static final String POPULATION_SIZE = "Popilation size";
 	public static final String GENERATION = "Generation";
+	public static final String STUDENTS = "Students";
+	public static final String EVENTS = "Events";
+	public static final String FEASIBILITY = "Feasibility";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
@@ -105,5 +108,20 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getGeneration() {
 		return GENERATION;
+	}
+
+	@Override
+	public String getStudents() {
+		return STUDENTS;
+	}
+
+	@Override
+	public String getEvents() {
+		return EVENTS;
+	}
+
+	@Override
+	public String getFeasibility() {
+		return FEASIBILITY;
 	}
 }

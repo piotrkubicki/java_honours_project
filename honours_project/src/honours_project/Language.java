@@ -16,6 +16,9 @@ public abstract class Language {
 	public abstract String getTitle();
 	public abstract String getPopulationSize();
 	public abstract String getGeneration();
+	public abstract String getStudents();
+	public abstract String getEvents();
+	public abstract String getFeasibility();
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();

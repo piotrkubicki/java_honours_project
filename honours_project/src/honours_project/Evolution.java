@@ -82,7 +82,7 @@ public class Evolution extends Observable implements Runnable {
 		}
 	}
 	
-	private void prepareData() {
+	public void prepareData() {
 		roomsSizes = new ArrayList<Integer>();
 		studentsData = new ArrayList<Integer>();
 		roomsData = new ArrayList<Integer>();
@@ -218,8 +218,6 @@ public class Evolution extends Observable implements Runnable {
 	}
 	
 	public void run() {
-		prepareData();
-		
 		running = true;
 		population = new ArrayList<Individual>();
 		generation = 0;
