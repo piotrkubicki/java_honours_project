@@ -4,8 +4,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +33,9 @@ public class Individual {
 		}
 		
 		Collections.shuffle(permutation);
-		
+		System.out.println(permutation);
+		permutation = getHarderFirst(permutation);
+		System.out.println(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -43,7 +48,6 @@ public class Individual {
 	
 	public Individual(List<Integer> permutation) {
 		this.permutation = permutation;
-		
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -221,6 +225,41 @@ public class Individual {
 		}
 		
 //		System.out.println("Missed events: " + unplacedEvents.size());
+	}
+	
+	private List<Integer> getHarderFirst(List<Integer> permutation) {
+		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
+		
+		List<Integer> result = new ArrayList<Integer>();
+		
+		for (Integer i : permutation) {
+			int key = Evolution.events.get(i).getSuitableRooms().size();
+			
+			temp.put(i, key);
+		}
+		
+		ArrayList t = new ArrayList(temp.entrySet());
+		
+		Collections.sort(t, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Map.Entry e1 = (Map.Entry) o1;
+				Map.Entry e2 = (Map.Entry) o2;
+				Integer first = (Integer) e1.getValue();
+				Integer second = (Integer) e2.getValue();
+				
+				return first.compareTo(second);
+			}
+		});
+		
+		Iterator i = t.iterator();
+		
+		while (i.hasNext()) {
+			Map.Entry tt = (Map.Entry) i.next();
+			result.add((Integer) tt.getKey());
+		}
+		
+//		System.out.println(temp);
+		return result;
 	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
