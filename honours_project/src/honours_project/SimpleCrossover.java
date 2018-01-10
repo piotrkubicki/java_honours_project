@@ -13,7 +13,7 @@ public class SimpleCrossover extends Operator {
 	}
 	
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public List<Individual> execute(List<Individual> individuals) {
 		Random rand = new Random();
 		int max = Evolution.EVENTS_NUMBER - combinationLength;
 		
@@ -23,24 +23,33 @@ public class SimpleCrossover extends Operator {
 		Individual parent2 = individuals.get(1);
 		
 		List<Integer> permutation = parent1.getPermutation();
-		List<Integer> insertion = new ArrayList<Integer>();
+		List<Integer> insertion1 = new ArrayList<Integer>();
 		
 		List<Integer> secondPermutation = parent2.getPermutation();
+		List<Integer> insertion2 = new ArrayList<Integer>();
 		
 		for (int i = start; i < (start + combinationLength); i++) {
-			insertion.add(secondPermutation.get(i));
+			insertion1.add(permutation.get(i));
+			insertion2.add(secondPermutation.get(i));
 		}
 		
-		permutation.removeAll(insertion);
+		permutation.removeAll(insertion2);
+		secondPermutation.removeAll(insertion1);
 		
 		for (int i = 0; i < combinationLength; i++) {
-			int ins = insertion.get(i);
+			int ins = insertion2.get(i);
 			permutation.add(start + i, ins);
+			ins = insertion1.get(i);
+			secondPermutation.add(start + i, ins);
 		}
 		
-		Individual child = new Individual(permutation);
+		Individual child1 = new Individual(permutation);
+		Individual child2 = new Individual(secondPermutation);
+		List<Individual> result = new ArrayList<Individual>();
+		result.add(child1);
+		result.add(child2);
 		
-		return child;
+		return result;
 	}
 
 }

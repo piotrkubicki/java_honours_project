@@ -228,41 +228,18 @@ public class Evolution extends Observable implements Runnable {
 		}
 		
 		while (running) {
-			Individual parent1 = selector.run(population);
-			Individual parent2 = selector.run(population);
-
 			List<Individual> parents = new ArrayList<Individual>();
-			parents.add(parent1);
-			parents.add(parent2);
+			parents.addAll(selector.execute(population)); // select parents
 			
 			List<Individual> childs = new ArrayList<Individual>();
-			
-//			Individual child = crossover.run(parents);
-			childs.add(crossover.run(parents));
-			mutator.run(childs);
-			population.add(childs.get(0));
-			Individual child = childs.remove(0);
-			// second child
-			parents = new ArrayList<Individual>();
-			parents.add(parent2);
-			parents.add(parent1);
-			
-			childs = new ArrayList<Individual>();
-			
-//			Individual child2 = crossover.run(parents);
-			childs.add(crossover.run(parents));
-			mutator.run(childs);
-			population.add(childs.get(0));
-			Individual child2 = childs.remove(0);
-			insertion.run(population);
-			best = findBest.run(population);
-//			System.out.println("Child1: " + child.getFitness() + " " + child.unplacedEventsNumber() + " Child2: " + child2.getFitness() + " " + child2.unplacedEventsNumber());
+			childs.addAll(crossover.execute(parents));
+			mutator.execute(childs);
+			population.addAll(childs);
+			insertion.execute(population);
+			best = findBest.execute(population).get(0);
+
 			generation++;
-			
-			
-//			for (Individual i : population) {
-//				System.out.println(i.getFitness()  + " " + i.unplacedEventsNumber());
-//			}
+
 			notifyAllObservers();
 		}
 	}

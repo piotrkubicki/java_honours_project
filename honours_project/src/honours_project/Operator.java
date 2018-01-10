@@ -4,5 +4,5 @@ import java.util.List;
 
 public abstract class Operator {
 	
-	public abstract Individual run(List<Individual> individuals);
+	public abstract List<Individual> execute(List<Individual> individuals);
 }

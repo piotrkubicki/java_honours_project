@@ -1,11 +1,12 @@
 package honours_project;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FindBest extends Operator {
 
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public List<Individual> execute(List<Individual> individuals) {
 		if (individuals.size() == 0)
 			return null;
 		
@@ -17,7 +18,10 @@ public class FindBest extends Operator {
 			}
 		}
 		
-		return best;
+		List<Individual> result = new ArrayList<Individual>();
+		result.add(best);
+		
+		return result;
 	}
 
 }
