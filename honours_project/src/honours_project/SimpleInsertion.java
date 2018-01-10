@@ -5,7 +5,7 @@ import java.util.List;
 public class SimpleInsertion extends Operator {
 
 	@Override
-	public Individual execute(List<Individual> individuals) {
+	public List<Individual> execute(List<Individual> individuals) {
 		while (individuals.size() > Evolution.POPULATION_SIZE) {
 			Individual worst = individuals.get(0);
 			
