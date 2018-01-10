@@ -228,8 +228,8 @@ public class Evolution extends Observable implements Runnable {
 		}
 		
 		while (running) {
-			Individual parent1 = selector.run(population);
-			Individual parent2 = selector.run(population);
+			Individual parent1 = selector.execute(population);
+			Individual parent2 = selector.execute(population);
 
 			List<Individual> parents = new ArrayList<Individual>();
 			parents.add(parent1);
@@ -238,8 +238,8 @@ public class Evolution extends Observable implements Runnable {
 			List<Individual> childs = new ArrayList<Individual>();
 			
 //			Individual child = crossover.run(parents);
-			childs.add(crossover.run(parents));
-			mutator.run(childs);
+			childs.add(crossover.execute(parents));
+			mutator.execute(childs);
 			population.add(childs.get(0));
 			Individual child = childs.remove(0);
 			// second child
@@ -250,12 +250,12 @@ public class Evolution extends Observable implements Runnable {
 			childs = new ArrayList<Individual>();
 			
 //			Individual child2 = crossover.run(parents);
-			childs.add(crossover.run(parents));
-			mutator.run(childs);
+			childs.add(crossover.execute(parents));
+			mutator.execute(childs);
 			population.add(childs.get(0));
 			Individual child2 = childs.remove(0);
-			insertion.run(population);
-			best = findBest.run(population);
+			insertion.execute(population);
+			best = findBest.execute(population);
 //			System.out.println("Child1: " + child.getFitness() + " " + child.unplacedEventsNumber() + " Child2: " + child2.getFitness() + " " + child2.unplacedEventsNumber());
 			generation++;
 			

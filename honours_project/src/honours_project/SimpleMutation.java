@@ -6,7 +6,7 @@ import java.util.Random;
 public class SimpleMutation extends Operator {
 
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public Individual execute(List<Individual> individuals) {
 		List<Integer> permutation = individuals.get(0).getPermutation();
 		Random rand = new Random();
 		int max = Evolution.EVENTS_NUMBER;

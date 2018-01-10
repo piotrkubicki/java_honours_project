@@ -6,7 +6,7 @@ import java.util.Random;
 public class SimpleSelect extends Operator {
 
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public Individual execute(List<Individual> individuals) {
 		Random rand = new Random();
 		int max = Evolution.POPULATION_SIZE;
 		

@@ -11,7 +11,7 @@ public class BetterMutation extends Operator {
 	}
 	
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public Individual execute(List<Individual> individuals) {
 		List<Integer> permutation = individuals.get(0).getPermutation();
 		Random rand = new Random();
 		double min = 0F;

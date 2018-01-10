@@ -5,7 +5,7 @@ import java.util.List;
 public class FindBest extends Operator {
 
 	@Override
-	public Individual run(List<Individual> individuals) {
+	public Individual execute(List<Individual> individuals) {
 		if (individuals.size() == 0)
 			return null;
 		

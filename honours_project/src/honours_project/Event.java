@@ -1,6 +1,7 @@
 package honours_project;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -58,6 +59,8 @@ public class Event {
 				} 
 				
 				temp.put(ff, room);
+//				suitableRooms.add(room);
+//				Collections.shuffle(suitableRooms);
 			}
 		}
 		

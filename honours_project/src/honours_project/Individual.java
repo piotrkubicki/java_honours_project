@@ -104,7 +104,7 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		fitness = single + end + three;
+		fitness = (single + end + three) * (unplacedEvents.size() + 1);
 	}
 	
 	private void singleEvents() {
@@ -135,7 +135,6 @@ public class Individual {
 				students = new ArrayList<Integer>();
 			}
 		}
-//		System.out.println("Single: " + single);
 	}
 	
 	// calculate students having events in last slot of the day
@@ -157,7 +156,6 @@ public class Individual {
 			
 			end += students.size();
 		}
-//		System.out.println("End: " + end);
 	}
 	
 	private void moreThanThreeEvents() {
@@ -196,7 +194,6 @@ public class Individual {
 				students = new ArrayList<List<Integer>>();
 			}
 		}
-//		System.out.println("Three: " + three);
 	}
 	
 	public void createPhenotype() {
@@ -206,7 +203,6 @@ public class Individual {
 			
 			for (Room room : event.getSuitableRooms()) {
 				for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
-//					System.out.println("Empty: " + (rooms.get(room.getId()).getSlot(i) == null) + " Clash: " + studentsNoClash(event, i, room.getId()));
 					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
 						rooms.get(room.getId()).setSlot(i, event);
 						found = true;
@@ -223,8 +219,6 @@ public class Individual {
 				unplacedEvents.add(event);
 			}
 		}
-		
-//		System.out.println("Missed events: " + unplacedEvents.size());
 	}
 	
 	private List<Integer> getHarderFirst(List<Integer> permutation) {
