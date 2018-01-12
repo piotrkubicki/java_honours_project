@@ -100,7 +100,8 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		fitness = single + end + three;
+		int missedEventsPenalty = unplacedEvents.size() * 1000;
+		fitness = single + end + three + missedEventsPenalty;
 	}
 	
 	private void singleEvents() {
@@ -131,7 +132,6 @@ public class Individual {
 				students = new ArrayList<Integer>();
 			}
 		}
-//		System.out.println("Single: " + single);
 	}
 	
 	// calculate students having events in last slot of the day
@@ -153,7 +153,6 @@ public class Individual {
 			
 			end += students.size();
 		}
-//		System.out.println("End: " + end);
 	}
 	
 	private void moreThanThreeEvents() {
@@ -192,7 +191,6 @@ public class Individual {
 				students = new ArrayList<List<Integer>>();
 			}
 		}
-//		System.out.println("Three: " + three);
 	}
 	
 	public void createPhenotype() {
@@ -219,8 +217,6 @@ public class Individual {
 				unplacedEvents.add(event);
 			}
 		}
-		
-//		System.out.println("Missed events: " + unplacedEvents.size());
 	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
