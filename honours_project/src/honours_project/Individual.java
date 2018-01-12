@@ -104,7 +104,8 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		fitness = (single + end + three) * (unplacedEvents.size() + 1);
+		int missedEventsPenalty = unplacedEvents.size() * 1000;
+		fitness = single + end + three + missedEventsPenalty;
 	}
 	
 	private void singleEvents() {
