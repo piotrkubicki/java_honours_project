@@ -33,9 +33,9 @@ public class Individual {
 		}
 		
 		Collections.shuffle(permutation);
-		System.out.println(permutation);
+//		System.out.println(permutation);
 		permutation = getHarderFirst(permutation);
-		System.out.println(permutation);
+//		System.out.println(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -253,7 +253,6 @@ public class Individual {
 			result.add((Integer) tt.getKey());
 		}
 		
-//		System.out.println(temp);
 		return result;
 	}
 	

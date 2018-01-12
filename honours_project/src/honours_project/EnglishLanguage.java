@@ -3,6 +3,7 @@ package honours_project;
 public class EnglishLanguage extends Language {
 	// FIELDS
 	public static final String RUN = "Run";
+	public static final String RUN_TIME = "Run time";
 	public static final String STOP = "Stop";
 	public static final String RUNS = "Runs";
 	public static final String FITNESS = "Fitness";
@@ -18,6 +19,8 @@ public class EnglishLanguage extends Language {
 	public static final String STUDENTS = "Students";
 	public static final String EVENTS = "Events";
 	public static final String FEASIBILITY = "Feasibility";
+	public static final String CLEAR = "Clear";
+	public static final String ELAPSED_TIME = "Elapsed time";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
@@ -27,8 +30,8 @@ public class EnglishLanguage extends Language {
 	public static final String BEST_ERROR = "Please run program to find solution!";
 	public static final String NO_NUMBER_ERROR = "Please provide number value!";
 	
-	public String getRun() {
-		return RUN;
+	public String getRunTime() {
+		return RUN_TIME;
 	}
 	
 	public String getStop() {
@@ -123,5 +126,20 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getFeasibility() {
 		return FEASIBILITY;
+	}
+
+	@Override
+	public String getRun() {
+		return RUN;
+	}
+
+	@Override
+	public String getClear() {
+		return CLEAR;
+	}
+	
+	@Override
+	public String getElapsedTime() {
+		return ELAPSED_TIME;
 	}
 }

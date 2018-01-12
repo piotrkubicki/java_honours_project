@@ -10,6 +10,7 @@ import java.util.Observer;
 
 public class Evolution extends Observable implements Runnable {
 	
+	public enum State { INITIALIZE, STARTING, RUNNING, FINISHING, STOP };
 	private List<Observer> observers = new ArrayList<Observer>();
 	
 	public static String filename = "";
@@ -20,6 +21,10 @@ public class Evolution extends Observable implements Runnable {
 	public static int FEATURES_NUMBER;
 	public static int STUDENTS_NUMBER;
 	public static int SLOTS_NUMBER = 45;
+	public static int RUNS_NUMBER = 1;
+	public static long RUN_TIME = 0;
+	
+	public static State state = State.STOP;
 	
 	public static List<Integer> roomsSizes;
 	public static List<Integer> studentsData;
@@ -217,30 +222,89 @@ public class Evolution extends Observable implements Runnable {
 		return (best != null);
 	}
 	
-	public void run() {
+	private void initialize() {
+		state = State.INITIALIZE;
 		running = true;
 		population = new ArrayList<Individual>();
 		generation = 0;
 		best = null;
+		notifyAllObservers();
 		
-		for (int i = 0; i < POPULATION_SIZE; i++) {
+		starting();
+	}
+	
+	private void starting() {
+		state = State.STARTING;
+		prepareData();
+		notifyAllObservers();
+		
+		for (int j = 0; j < POPULATION_SIZE; j++) {
 			population.add(new Individual());
 		}
 		
-		while (running) {
-			List<Individual> parents = new ArrayList<Individual>();
-			parents.addAll(selector.execute(population)); // select parents
+		if (RUN_TIME > 0)
+			startTimer();
+		
+		running();
+	}
+	
+	private void running() {
+		state = State.RUNNING;
+		notifyAllObservers();
+	}
+	
+	private void stoping() {
+		state = State.STOP;
+		notifyAllObservers();
+	}
+	
+	public void run() {
+		
+		for (int i = 0; i < RUNS_NUMBER; i++) {
+			initialize();
 			
-			List<Individual> childs = new ArrayList<Individual>();
-			childs.addAll(crossover.execute(parents));
-			mutator.execute(childs);
-			population.addAll(childs);
-			insertion.execute(population);
-			best = findBest.execute(population).get(0);
-			
-			generation++;
-
-			notifyAllObservers();
+			while (running) {
+				List<Individual> parents = new ArrayList<Individual>();
+				parents.addAll(selector.execute(population)); // select parents
+				
+				List<Individual> childs = new ArrayList<Individual>();
+				childs.addAll(crossover.execute(parents));
+				mutator.execute(childs);
+				population.addAll(childs);
+				insertion.execute(population);
+				best = findBest.execute(population).get(0);
+				
+				generation++;
+	
+				notifyAllObservers();
+			}
 		}
+		
+		stoping();
+	}
+	
+	public void setRunTime(long runTime) {
+		RUN_TIME = runTime;
+	}
+	
+	public void setRunsNumber(int numberOfRuns) {
+		RUNS_NUMBER = numberOfRuns;
+	}
+	
+	private void startTimer() {
+		new Thread(new Runnable() {
+			 public void run() {
+				 try {
+					Thread.sleep(RUN_TIME);
+					running = false;
+					state = State.FINISHING;
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				 
+			 }
+		}).start();
 	}
 }

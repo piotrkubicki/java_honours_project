@@ -4,6 +4,7 @@ public abstract class Language {
 	
 	// FIELDS
 	public abstract String getRun();
+	public abstract String getRunTime();
 	public abstract String getStop();
 	public abstract String getRuns();
 	public abstract String getFitness();
@@ -19,6 +20,8 @@ public abstract class Language {
 	public abstract String getStudents();
 	public abstract String getEvents();
 	public abstract String getFeasibility();
+	public abstract String getClear();
+	public abstract String getElapsedTime();
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();

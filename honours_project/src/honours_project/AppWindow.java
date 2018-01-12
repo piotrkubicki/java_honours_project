@@ -2,9 +2,12 @@ package honours_project;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,7 +22,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import org.jfree.chart.ChartFactory;
@@ -29,21 +34,30 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import javax.swing.border.TitledBorder;
+
+import honours_project.Evolution.State;
 
 public class AppWindow extends JFrame implements Observer {
 	private Evolution evolution;
 	private Language language = new EnglishLanguage();
+	
+	String filename;
+	long runTime;
 
 	private XYSeriesCollection dataset;
-	private int seriesCounter = 0;
+	private int seriesCounter;
+	
+	private Timer timer = new Timer(1000, new TimerActionListener());;
+	private long elapsedTime;
+	
+	ChartPanel chartPanel;
 	
 	private JPanel contentPane;
 	private JTable eventsTable;
 	private JPanel panel;
 	private JPanel leftPanel;
-	private JLabel constraintLabel;
-	private JTextField constraintTextField;
+	private JLabel runTimeLabel;
+	private JTextField runTimeTextField;
 	private JLabel runsLabel;
 	private JTextField runsTextField;
 	private JButton startButton;
@@ -82,6 +96,11 @@ public class AppWindow extends JFrame implements Observer {
 	private JPanel panel_7;
 	private JPanel panel_8;
 	private JPanel panel_9;
+	private JButton clearButton;
+	private JLabel runNumberLabel;
+	private JLabel runNumberTxt;
+	private JLabel runElapsedTimeLabel;
+	private JLabel runElapsedTimeTxt;
 
 	/**
 	 * Create the frame.
@@ -127,22 +146,26 @@ public class AppWindow extends JFrame implements Observer {
 		panel_5 = new JPanel();
 		panel_3.add(panel_5);
 		panel_5.setBorder(new EmptyBorder(10, 10, 10, 10));
-		panel_5.setLayout(new GridLayout(1, 0, 0, 0));
+		panel_5.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		saveButton = new JButton(language.getSave());
 		panel_5.add(saveButton);
+		
+		clearButton = new JButton(language.getClear());
+		clearButton.addMouseListener(new ClearButtonMouseAdapter());
+		panel_5.add(clearButton);
 		
 		panel_4 = new JPanel();
 		panel_3.add(panel_4);
 		panel_4.setBorder(new EmptyBorder(10, 10, 10, 10));
 		panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		constraintLabel = new JLabel(language.getRun() + ":");
-		panel_4.add(constraintLabel);
+		runTimeLabel = new JLabel(language.getRunTime() + " (s):");
+		panel_4.add(runTimeLabel);
 		
-		constraintTextField = new JTextField();
-		panel_4.add(constraintTextField);
-		constraintTextField.setColumns(10);
+		runTimeTextField = new JTextField();
+		panel_4.add(runTimeTextField);
+		runTimeTextField.setColumns(10);
 		
 		runsLabel = new JLabel(language.getRuns() + ":");
 		panel_4.add(runsLabel);
@@ -170,6 +193,18 @@ public class AppWindow extends JFrame implements Observer {
 		leftPanel.add(innerPanel);
 		innerPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
 		innerPanel.setLayout(new GridLayout(0, 4, 0, 0));
+		
+		runNumberLabel = new JLabel(language.getRun());
+		innerPanel.add(runNumberLabel);
+		
+		runNumberTxt = new JLabel("0");
+		innerPanel.add(runNumberTxt);
+		
+		runElapsedTimeLabel = new JLabel(language.getElapsedTime());
+		innerPanel.add(runElapsedTimeLabel);
+		
+		runElapsedTimeTxt = new JLabel("00:00");
+		innerPanel.add(runElapsedTimeTxt);
 		
 		missedEventsLabel = new JLabel(language.getMissedEvents() + ":");
 		innerPanel.add(missedEventsLabel);
@@ -213,7 +248,7 @@ public class AppWindow extends JFrame implements Observer {
 		middlePanel = new JPanel();
 		middlePanel.setBorder(new EmptyBorder(0, 100, 0, 0));
 		panel.add(middlePanel);
-		middlePanel.setLayout(new GridLayout(1, 0, 0, 0));
+		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		bottomPanel = new JPanel();
 		bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -254,7 +289,8 @@ public class AppWindow extends JFrame implements Observer {
 		scrollPane_1.setViewportView(studentsTable);
 		
 		// GRAPH
-		ChartPanel chartPanel = createChart();
+		chartPanel = new ChartPanel(null);
+		chartPanel.setChart(createChart());
 		
 		middlePanel.add(chartPanel);
 		
@@ -275,7 +311,28 @@ public class AppWindow extends JFrame implements Observer {
 		seriesCounter++;
 	}
 	
-	private ChartPanel createChart() {
+	private void clearData() {
+		clearLabels();
+		clearChart();
+	}
+	
+	private void clearLabels() {
+		generationTxt.setText("0");
+		missedEventsTxt.setText("0");
+		singleTxt.setText("0");
+		fitnessTxt.setText("0");
+		threeTxt.setText("0");
+		endTxt.setText("0");
+		runNumberTxt.setText("0");
+		runElapsedTimeTxt.setText("00:00");
+	}
+	
+	private void clearChart() {
+		dataset.removeAllSeries();
+		seriesCounter = 0;
+	}
+
+	private JFreeChart createChart() {
 		dataset = new XYSeriesCollection();
 		JFreeChart chart = ChartFactory.createXYLineChart(language.getFeasibility(), language.getGeneration(), language.getFeasibility(), dataset);
 		XYPlot plot = chart.getXYPlot();
@@ -284,61 +341,65 @@ public class AppWindow extends JFrame implements Observer {
 		
 		chart.setBackgroundPaint(null);
 		
-		return new ChartPanel(chart);
+		return chart;
 	}
 
 	public void showWindow() {
 		this.pack();
 		this.setVisible(true);
 	}
+	
+	private void initialize() {
+		startButton.setEnabled(false);
+		clearButton.setEnabled(false);
+		runNumberTxt.setText(Integer.toString(seriesCounter + 1));
+	}
+	
+	private void starting() {
+		elapsedTime = 0;
+		startTime();
+		timetableModel = (DefaultTableModel) createTable();
+		eventsTable.setModel(timetableModel);
+		
+		studentsTimetableModel = (DefaultTableModel) createTable();
+		studentsTable.setModel(studentsTimetableModel);
+		addSeries();
+	}
 
+	private void running() {
+		startButton.setText(language.getStop());
+		startButton.setEnabled(true);
+	}
+	
+	private void finishing() {
+		startButton.setEnabled(false);
+	}
+	
+	private void stoping() {
+		startButton.setText(language.getRun());
+		startButton.setEnabled(true);
+		clearButton.setEnabled(true);
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
+		if (Evolution.state == State.INITIALIZE) {
+			initialize();
+		} else if (Evolution.state == State.STARTING) {
+			starting();
+		} else if (Evolution.state == State.RUNNING) {
+			running();
+		} else if (Evolution.state == State.FINISHING) { 
+			finishing();
+		} else if (Evolution.state == State.STOP) {
+			stoping();
+		}
+		
 		if (arg instanceof Individual) {
 			Individual best = (Individual) arg;
 			updateTimetables(best.getRooms());
 			updateLabels(best);
 			dataset.getSeries(seriesCounter-1).add(evolution.getGeneration(), best.getFitness());
-		}
-	}
-	
-	private class StartBtnMouseAdapter extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			boolean valid = true;
-			String filename = loadFileTextField.getText();
-			
-			try {
-				evolution.setPopulatinoSize(Integer.parseInt(populationSizeTextField.getText()));
-			} catch (NumberFormatException ec) {
-				JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-				valid = false;
-			}		
-			
-			if (filename.length() < 1) {
-				JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-				valid = false;
-			}
-
-			if (valid) {
-				if (startButton.getText() == language.getRun()) {
-					evolution.setFile(filename);
-					evolution.prepareData();
-					timetableModel = (DefaultTableModel) createTable();
-					eventsTable.setModel(timetableModel);
-					
-					studentsTimetableModel = (DefaultTableModel) createTable();
-					studentsTable.setModel(studentsTimetableModel);
-					
-					startButton.setText(language.getStop());
-					Thread evolve = new Thread(evolution);
-					evolve.start();
-					addSeries();
-				} else if (startButton.getText() == language.getStop()) {
-					startButton.setText(language.getRun());
-					evolution.stopEvolution();
-				}
-			}
 		}
 	}
 	
@@ -384,21 +445,27 @@ public class AppWindow extends JFrame implements Observer {
 		return table;
 	}
 	
+	private void startTime() {
+		timer.start();
+	}
+	
 	private class SaveButtonMouseAdapter extends MouseAdapter {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (evolution.bestExists()) {
-				JFileChooser saveFile = new JFileChooser();
-				int rVal = saveFile.showSaveDialog(AppWindow.this);
-				
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					String filename = saveFile.getSelectedFile().getName();
-					String dir = saveFile.getCurrentDirectory().toString();
-					evolution.saveSolution(dir + "/" + filename);
+			if (saveButton.isEnabled()) {
+				if (evolution.bestExists()) {
+					JFileChooser saveFile = new JFileChooser();
+					int rVal = saveFile.showSaveDialog(AppWindow.this);
+					
+					if (rVal == JFileChooser.APPROVE_OPTION) {
+						String filename = saveFile.getSelectedFile().getName();
+						String dir = saveFile.getCurrentDirectory().toString();
+						evolution.saveSolution(dir + "/" + filename);
+					}
+				} else {
+					JOptionPane.showMessageDialog(AppWindow.this, language.getBestError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
 				}
-			} else {
-				JOptionPane.showMessageDialog(AppWindow.this, language.getBestError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -407,14 +474,103 @@ public class AppWindow extends JFrame implements Observer {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			JFileChooser fileLoader = new JFileChooser();
-			int rVal = fileLoader.showOpenDialog(AppWindow.this);
-			
-			if (rVal == JFileChooser.APPROVE_OPTION) {
-				loadFileTextField.setText(fileLoader.getCurrentDirectory() + "/" + fileLoader.getSelectedFile().getName());
-			} else if (rVal == JFileChooser.CANCEL_OPTION) {
-				loadFileTextField.setText("");
+			if (loadFileButton.isEnabled()) {
+				JFileChooser fileLoader = new JFileChooser();
+				int rVal = fileLoader.showOpenDialog(AppWindow.this);
+				
+				if (rVal == JFileChooser.APPROVE_OPTION) {
+					loadFileTextField.setText(fileLoader.getCurrentDirectory() + "/" + fileLoader.getSelectedFile().getName());
+				} else if (rVal == JFileChooser.CANCEL_OPTION) {
+					loadFileTextField.setText("");
+				}
 			}
 		}
 	}
+	
+	private class ClearButtonMouseAdapter extends MouseAdapter {
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (clearButton.isEnabled()) {
+				clearData();
+			}
+		}
+	}
+	
+	private boolean validateInput() {
+		filename = loadFileTextField.getText();
+		
+		String runTime = runTimeTextField.getText();
+		String runsNumber = runsTextField.getText();
+		
+		if (!runTime.equals("") && runsNumber.equals("") || runTime.equals("") && runsNumber.equals("")) {
+			evolution.setRunsNumber(1);
+		}
+		
+		if (!runTime.equals("") && !runsNumber.equals("")) {
+			try {
+				evolution.setRunsNumber(Integer.parseInt(runsNumber));
+			} catch (NumberFormatException ec) {
+				JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		
+		if (!runTime.equals("")) {
+			try {
+				this.runTime = Integer.parseInt(runTime) * 1000;
+				evolution.setRunTime(this.runTime);
+			} catch (NumberFormatException ec) {
+				JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		
+		
+		try {
+			evolution.setPopulatinoSize(Integer.parseInt(populationSizeTextField.getText()));
+		} catch (NumberFormatException ec) {
+			JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+			return false;
+		}	
+		
+		if (filename.length() < 1) {
+			JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private class StartBtnMouseAdapter extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (startButton.isEnabled()) {
+				if (validateInput()) {
+					if (startButton.getText() == language.getRun()) {
+						evolution.setFile(filename);
+						Thread evolve = new Thread(evolution);
+						evolve.start();
+					} else if (startButton.getText() == language.getStop()) {
+						evolution.setRunsNumber(0);
+						evolution.stopEvolution();
+					}
+				}
+			}
+		}
+	}
+	
+	private class TimerActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			elapsedTime += 1000;
+			SimpleDateFormat df = new SimpleDateFormat("mm:ss");
+			runElapsedTimeTxt.setText(df.format(elapsedTime));
+			
+			if (Evolution.state == State.STOP) {
+				timer.stop();
+			}
+		}
+	};
 }
