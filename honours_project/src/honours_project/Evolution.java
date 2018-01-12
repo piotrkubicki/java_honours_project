@@ -237,7 +237,7 @@ public class Evolution extends Observable implements Runnable {
 			population.addAll(childs);
 			insertion.execute(population);
 			best = findBest.execute(population).get(0);
-
+			
 			generation++;
 
 			notifyAllObservers();
