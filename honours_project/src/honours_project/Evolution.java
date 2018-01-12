@@ -54,7 +54,7 @@ public class Evolution extends Observable implements Runnable {
 	public Evolution() {
 		population = new ArrayList<Individual>();
 		selector = new SimpleSelect();
-		crossover = new SimpleCrossover(10);
+		crossover = new SimpleCrossover(0);
 		mutator = new SimpleMutation();
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
@@ -234,12 +234,17 @@ public class Evolution extends Observable implements Runnable {
 			List<Individual> childs = new ArrayList<Individual>();
 			childs.addAll(crossover.execute(parents));
 			mutator.execute(childs);
+			Operator localSearch = new LastSlotLocalSearch();
+			localSearch.execute(childs);
 			population.addAll(childs);
 			insertion.execute(population);
 			best = findBest.execute(population).get(0);
 			
 			generation++;
 
+			for (Individual child : childs) {
+				System.out.println(child.getFitness() + " " + child.unplacedEventsNumber());
+			}
 			notifyAllObservers();
 		}
 	}

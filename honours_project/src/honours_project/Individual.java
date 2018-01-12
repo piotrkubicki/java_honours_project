@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,8 @@ public class Individual {
 		
 		Collections.shuffle(permutation);
 		System.out.println(permutation);
-		permutation = getHarderFirst(permutation);
-		System.out.println(permutation);
+//		permutation = getHarderFirst(permutation);
+//		System.out.println(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -99,11 +100,11 @@ public class Individual {
 	}
 	
 	public void evaluate() {
-		createPhenotype();
+		genotypeToPhenotype();
 		singleEvents();
 		endOfDayEvents();
 		moreThanThreeEvents();
-		
+
 		int missedEventsPenalty = unplacedEvents.size() * 1000;
 		fitness = single + end + three + missedEventsPenalty;
 	}
@@ -197,18 +198,55 @@ public class Individual {
 		}
 	}
 	
-	public void createPhenotype() {
+	public boolean insertEvent(Room room, Event event) {
+		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+			if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
+				rooms.get(room.getId()).setSlot(i, event);
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean randomInsertEvent(Room room, Event event) {
+		List<Integer> slots = new ArrayList<Integer>();
+		
+		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+			slots.add(i);
+		}
+		
+		Collections.shuffle(slots);
+		
+		while (!slots.isEmpty()) {
+			int i = slots.remove(0);
+			
+			if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
+				rooms.get(room.getId()).setSlot(i, event);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void genotypeToPhenotype() {
 		for (Integer eventId : permutation) {
 			Event event = Evolution.events.get(eventId);
 			boolean found = false;
 			
+			Random rand = new Random();
+			double min = 0F;
+			double max = 1F;
+			
 			for (Room room : event.getSuitableRooms()) {
-				for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
-					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
-						rooms.get(room.getId()).setSlot(i, event);
-						found = true;
-						break;
-					}
+				double p = min = rand.nextFloat() * (max - min);
+				
+				if (p > 0.1) {
+					found = insertEvent(room, event);
+				} else {
+					found = randomInsertEvent(room, event);
 				}
 				
 				if (found) {
@@ -218,6 +256,24 @@ public class Individual {
 			
 			if (found == false) {
 				unplacedEvents.add(event);
+			}
+		}
+	}
+	
+	public void phenotypeToGenotype() {
+		permutation = new ArrayList<Integer>();
+		
+		for (Event event : unplacedEvents) {
+			permutation.add(event.getId());
+		}
+		
+		for (Room room : rooms) {
+			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				Event event = room.getSlot(i);
+				
+				if (event != null) {
+					permutation.add(event.getId());
+				}
 			}
 		}
 	}

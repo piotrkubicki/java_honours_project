@@ -243,7 +243,7 @@ public class AppWindow extends JFrame implements Observer {
 		
 		panel_7 = new JPanel();
 		panel_9.add(panel_7);
-		panel_7.setBorder(new TitledBorder(null, language.getEvents(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_7.setBorder(new TitledBorder(null, language.getStudents(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_7.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		scrollPane_1 = new JScrollPane();

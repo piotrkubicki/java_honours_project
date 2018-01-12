@@ -13,7 +13,7 @@ public class EnglishLanguage extends Language {
 	public static final String LOAD_FILE = "Load file";
 	public static final String SAVE = "Save";
 	public static final String TITLE = "EA Timetabling";
-	public static final String POPULATION_SIZE = "Popilation size";
+	public static final String POPULATION_SIZE = "Population size";
 	public static final String GENERATION = "Generation";
 	public static final String STUDENTS = "Students";
 	public static final String EVENTS = "Events";
