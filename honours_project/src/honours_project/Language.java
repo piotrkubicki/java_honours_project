@@ -30,4 +30,5 @@ public abstract class Language {
 	public abstract String getNoFileError();
 	public abstract String getBestError();
 	public abstract String getNoNumberError();
+	public abstract String getRequiredError();
 }

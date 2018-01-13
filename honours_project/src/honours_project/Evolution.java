@@ -69,7 +69,7 @@ public class Evolution extends Observable implements Runnable {
 		Evolution.filename = filename;
 	}
 	
-	public void setPopulatinoSize(int size) {
+	public void setPopulationSize(int size) {
 		POPULATION_SIZE = size;
 	}
 	
@@ -298,7 +298,7 @@ public class Evolution extends Observable implements Runnable {
 					Thread.sleep(RUN_TIME);
 					running = false;
 					state = State.FINISHING;
-					
+					notifyAllObservers();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -14,7 +14,7 @@ public class EnglishLanguage extends Language {
 	public static final String LOAD_FILE = "Load file";
 	public static final String SAVE = "Save";
 	public static final String TITLE = "EA Timetabling";
-	public static final String POPULATION_SIZE = "Popilation size";
+	public static final String POPULATION_SIZE = "Population size";
 	public static final String GENERATION = "Generation";
 	public static final String STUDENTS = "Students";
 	public static final String EVENTS = "Events";
@@ -29,6 +29,7 @@ public class EnglishLanguage extends Language {
 	public static final String NO_FILE_ERROR = "Please select problem file!";
 	public static final String BEST_ERROR = "Please run program to find solution!";
 	public static final String NO_NUMBER_ERROR = "Please provide number value!";
+	public static final String REQUIRED = "Field is required!";
 	
 	public String getRunTime() {
 		return RUN_TIME;
@@ -141,5 +142,10 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getElapsedTime() {
 		return ELAPSED_TIME;
+	}
+
+	@Override
+	public String getRequiredError() {
+		return REQUIRED;
 	}
 }

@@ -1,5 +1,6 @@
 package honours_project;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -8,10 +9,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -36,6 +44,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import honours_project.Evolution.State;
+import honours_project.Validator.Rules;
 
 public class AppWindow extends JFrame implements Observer {
 	private Evolution evolution;
@@ -51,13 +60,14 @@ public class AppWindow extends JFrame implements Observer {
 	private long elapsedTime;
 	
 	ChartPanel chartPanel;
+	Validator validator = new Validator(this, language);
 	
 	private JPanel contentPane;
 	private JTable eventsTable;
 	private JPanel panel;
 	private JPanel leftPanel;
 	private JLabel runTimeLabel;
-	private JTextField runTimeTextField;
+	public static JTextField runTimeTextField;
 	private JLabel runsLabel;
 	private JTextField runsTextField;
 	private JButton startButton;
@@ -174,7 +184,7 @@ public class AppWindow extends JFrame implements Observer {
 		panel_4.add(runsTextField);
 		runsTextField.setColumns(10);
 		
-		populationSizeLabel = new JLabel(language.getPopulationSize() + ":");
+		populationSizeLabel = new JLabel(language.getPopulationSize() + " *:");
 		panel_4.add(populationSizeLabel);
 		
 		populationSizeTextField = new JTextField();
@@ -203,7 +213,7 @@ public class AppWindow extends JFrame implements Observer {
 		runElapsedTimeLabel = new JLabel(language.getElapsedTime());
 		innerPanel.add(runElapsedTimeLabel);
 		
-		runElapsedTimeTxt = new JLabel("00:00");
+		runElapsedTimeTxt = new JLabel("00:00:00");
 		innerPanel.add(runElapsedTimeTxt);
 		
 		missedEventsLabel = new JLabel(language.getMissedEvents() + ":");
@@ -278,7 +288,7 @@ public class AppWindow extends JFrame implements Observer {
 		
 		panel_7 = new JPanel();
 		panel_9.add(panel_7);
-		panel_7.setBorder(new TitledBorder(null, language.getEvents(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_7.setBorder(new TitledBorder(null, language.getStudents(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_7.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		scrollPane_1 = new JScrollPane();
@@ -306,7 +316,7 @@ public class AppWindow extends JFrame implements Observer {
 	}
 	
 	private void addSeries() {
-		XYSeries s = new XYSeries(language.getFeasibility() + seriesCounter);
+		XYSeries s = new XYSeries(language.getRun() + (seriesCounter + 1));
 		dataset.addSeries(s);
 		seriesCounter++;
 	}
@@ -324,7 +334,7 @@ public class AppWindow extends JFrame implements Observer {
 		threeTxt.setText("0");
 		endTxt.setText("0");
 		runNumberTxt.setText("0");
-		runElapsedTimeTxt.setText("00:00");
+		runElapsedTimeTxt.setText("00:00:00");
 	}
 	
 	private void clearChart() {
@@ -357,12 +367,19 @@ public class AppWindow extends JFrame implements Observer {
 	
 	private void starting() {
 		elapsedTime = 0;
-		startTime();
-		timetableModel = (DefaultTableModel) createTable();
-		eventsTable.setModel(timetableModel);
 		
-		studentsTimetableModel = (DefaultTableModel) createTable();
-		studentsTable.setModel(studentsTimetableModel);
+		startTime();
+		
+		if (timetableModel == null) {
+			timetableModel = (DefaultTableModel) createTable();
+			eventsTable.setModel(timetableModel);
+		}
+		
+		if (studentsTimetableModel == null) {
+			studentsTimetableModel = (DefaultTableModel) createTable();
+			studentsTable.setModel(studentsTimetableModel);
+		}
+		
 		addSeries();
 	}
 
@@ -373,6 +390,7 @@ public class AppWindow extends JFrame implements Observer {
 	
 	private void finishing() {
 		startButton.setEnabled(false);
+		timer.stop();
 	}
 	
 	private void stoping() {
@@ -449,6 +467,10 @@ public class AppWindow extends JFrame implements Observer {
 		timer.start();
 	}
 	
+	public void setRunTime(int runTime) {
+		this.runTime = runTime;
+	}
+	
 	private class SaveButtonMouseAdapter extends MouseAdapter {
 		
 		@Override
@@ -497,58 +519,43 @@ public class AppWindow extends JFrame implements Observer {
 		}
 	}
 	
-	private boolean validateInput() {
-		filename = loadFileTextField.getText();
-		
-		String runTime = runTimeTextField.getText();
-		String runsNumber = runsTextField.getText();
-		
-		if (!runTime.equals("") && runsNumber.equals("") || runTime.equals("") && runsNumber.equals("")) {
-			evolution.setRunsNumber(1);
-		}
-		
-		if (!runTime.equals("") && !runsNumber.equals("")) {
-			try {
-				evolution.setRunsNumber(Integer.parseInt(runsNumber));
-			} catch (NumberFormatException ec) {
-				JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		
-		if (!runTime.equals("")) {
-			try {
-				this.runTime = Integer.parseInt(runTime) * 1000;
-				evolution.setRunTime(this.runTime);
-			} catch (NumberFormatException ec) {
-				JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		
-		
-		try {
-			evolution.setPopulatinoSize(Integer.parseInt(populationSizeTextField.getText()));
-		} catch (NumberFormatException ec) {
-			JOptionPane.showMessageDialog(AppWindow.this, language.getNoNumberError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-			return false;
-		}	
-		
-		if (filename.length() < 1) {
-			JOptionPane.showMessageDialog(AppWindow.this, language.getNoFileError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		return true;
-	}
-	
 	private class StartBtnMouseAdapter extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (startButton.isEnabled()) {
-				if (validateInput()) {
+				filename = loadFileTextField.getText();
+				
+				String runTime = runTimeTextField.getText();
+				String runsNumber = runsTextField.getText();
+				String populationSize = populationSizeTextField.getText();
+				
+				Hashtable<List<JTextField>, List<Rules>> input = new Hashtable<List<JTextField>, List<Rules>>();
+				input.put(new ArrayList<JTextField>(Arrays.asList(loadFileTextField)), new ArrayList<Rules>(Arrays.asList(Rules.REQUIRED)));
+				input.put(new ArrayList<JTextField>(Arrays.asList(runTimeTextField)), new ArrayList<Rules>(Arrays.asList(Rules.INTEGER)));
+				input.put(new ArrayList<JTextField>(Arrays.asList(runsTextField, runTimeTextField)), new ArrayList<Rules>(Arrays.asList(Rules.INTEGER, Rules.REQUIRED_WITH)));
+				input.put(new ArrayList<JTextField>(Arrays.asList(populationSizeTextField)), new ArrayList<Rules>(Arrays.asList(Rules.INTEGER, Rules.REQUIRED)));
+				
+				if (validator.validate(input)) {
 					if (startButton.getText() == language.getRun()) {
 						evolution.setFile(filename);
+						int time = 0;
+						
+						if (runsNumber.equals("")) {
+							evolution.setRunsNumber(1);
+						} else {
+							evolution.setRunsNumber(Integer.parseInt(runsNumber));
+						}
+						
+						if (!runTime.equals("")) {
+							time = Integer.parseInt(runTime) * 1000;
+							setRunTime(time);
+							evolution.setRunTime(time);
+						} else {
+							evolution.setRunTime(0);
+						}
+						
+						evolution.setPopulationSize(Integer.parseInt(populationSize));
+						
 						Thread evolve = new Thread(evolution);
 						evolve.start();
 					} else if (startButton.getText() == language.getStop()) {
@@ -565,12 +572,10 @@ public class AppWindow extends JFrame implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			elapsedTime += 1000;
-			SimpleDateFormat df = new SimpleDateFormat("mm:ss");
-			runElapsedTimeTxt.setText(df.format(elapsedTime));
+			SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			
-			if (Evolution.state == State.STOP) {
-				timer.stop();
-			}
+			runElapsedTimeTxt.setText(df.format(elapsedTime));
 		}
 	};
 }
