@@ -8,11 +8,13 @@ public class Room {
 	private List<Event> slots = new ArrayList<Event>();
 	private List<Integer> features;
 	private int spaces;
+	private int freeSlots;
 	
 	public Room(int roomId, List<Integer> features, int spaces) {
 		this.roomId = roomId;
 		this.features = features;
 		this.spaces = spaces;
+		this.freeSlots = 0;
 		
 		clearSlots();
 	}
@@ -38,6 +40,12 @@ public class Room {
 	}
 	
 	public void setSlot(int slot, Event event) {
+		if (event != null) {
+			freeSlots--;
+		} else {
+			freeSlots++;
+		}
+		
 		slots.set(slot, event);
 	}
 	
@@ -58,6 +66,7 @@ public class Room {
 		
 		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			slots.add(null);
+			freeSlots++;
 		}
 	}
 }

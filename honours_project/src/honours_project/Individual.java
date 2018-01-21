@@ -3,6 +3,7 @@ package honours_project;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,9 +35,7 @@ public class Individual {
 		}
 		
 		Collections.shuffle(permutation);
-//		System.out.println(permutation);
 		permutation = getHarderFirst(permutation);
-//		System.out.println(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -47,7 +47,8 @@ public class Individual {
 	}
 	
 	public Individual(List<Integer> permutation) {
-		this.permutation = permutation;
+//		this.permutation = permutation;
+		this.permutation = getHarderFirst(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			Room room = new Room();
@@ -202,24 +203,102 @@ public class Individual {
 			Event event = Evolution.events.get(eventId);
 			boolean found = false;
 			
-			for (Room room : event.getSuitableRooms()) {
-				for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
-					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
-						rooms.get(room.getId()).setSlot(i, event);
-						found = true;
-						break;
-					}
-				}
-				
-				if (found) {
-					break;
-				}
-			}
+			found = randomRoomLocateEvent(event);
 			
 			if (found == false) {
 				unplacedEvents.add(event);
 			}
 		}
+		
+		for (int i = 0; i < unplacedEvents.size(); i++) {
+			Event event = unplacedEvents.get(i);
+			locateUnplacedEvent(event);
+		}
+		
+	}
+	
+	private boolean simpleLocateEvent(Event event) {
+		boolean found = false;
+		
+		for (Room room : event.getSuitableRooms()) {
+			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
+					rooms.get(room.getId()).setSlot(i, event);
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				break;
+			}
+		}
+		
+		return found;
+	}
+	
+	private boolean locateUnplacedEvent(Event event) {
+		boolean found = false;
+		
+		for (Room room : event.getSuitableRooms()) {
+			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				Event oldEvent = rooms.get(room.getId()).getSlot(i);
+				rooms.get(room.getId()).setSlot(i, null);
+			
+				if (studentsNoClash(event, i)) {
+						
+					if (oldEvent == null) {
+//						System.out.println("IS NULL");
+						rooms.get(room.getId()).setSlot(i, event);
+						unplacedEvents.remove(event);
+						found = true;
+						break;
+					}
+					else if (randomRoomLocateEvent(oldEvent)) {
+//						System.out.println("RELOCATED");
+						rooms.get(room.getId()).setSlot(i, event);
+						unplacedEvents.remove(event);
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found) {
+					rooms.get(room.getId()).setSlot(i, oldEvent);
+				}
+			}
+			
+			if (found) {
+				break;
+			}
+		}
+		
+		return found;
+	}
+	
+	private boolean randomRoomLocateEvent(Event event) {
+		boolean found = false;
+		Random rand = new Random();
+		List<List<Integer>> freeSlots = new ArrayList<List<Integer>>();
+		
+		for (Room room : event.getSuitableRooms()) {
+			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
+
+					List<Integer> pair = new ArrayList<>(Arrays.asList(room.getId(), i));
+					freeSlots.add(pair);
+				}
+			}
+		}
+		
+		if (!freeSlots.isEmpty()) {
+			int selected = rand.nextInt(freeSlots.size());
+			List<Integer> pair = freeSlots.get(selected);
+			rooms.get(pair.get(0)).setSlot(pair.get(1), event);
+			found = true;
+		}
+		
+		return found;
 	}
 	
 	private List<Integer> getHarderFirst(List<Integer> permutation) {

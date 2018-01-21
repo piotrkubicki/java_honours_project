@@ -60,7 +60,7 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new SimpleSelect();
 		crossover = new SimpleCrossover(10);
-		mutator = new SimpleMutation();
+		mutator = new BetterMutation(0.01);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
@@ -275,7 +275,9 @@ public class Evolution extends Observable implements Runnable {
 				best = findBest.execute(population).get(0);
 				
 				generation++;
-	
+				for (Individual ind : childs) {
+					System.out.println("Fitness: " + ind.getFitness() + " Unplaced events: " + ind.unplacedEventsNumber());
+				}
 				notifyAllObservers();
 			}
 		}
