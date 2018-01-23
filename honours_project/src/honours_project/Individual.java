@@ -27,6 +27,8 @@ public class Individual {
 	private int single = 0;
 	private int three = 0;
 	
+	private Map<Integer, List<List<Integer>>> suitableSlotsMap = new HashMap<Integer, List<List<Integer>>>();
+	
 	public Individual() {
 		permutation = new ArrayList<Integer>();
 		
@@ -212,7 +214,8 @@ public class Individual {
 		
 		for (int i = 0; i < unplacedEvents.size(); i++) {
 			Event event = unplacedEvents.get(i);
-			locateUnplacedEvent(event);
+//			locateUnplacedEvent(event);
+			locate(event, 0);
 		}
 		
 	}
@@ -296,6 +299,60 @@ public class Individual {
 			List<Integer> pair = freeSlots.get(selected);
 			rooms.get(pair.get(0)).setSlot(pair.get(1), event);
 			found = true;
+		}
+		
+		suitableSlotsMap.put(event.getId(), freeSlots);
+		
+		return found;
+	}
+	
+	private boolean locate(Event event, int depth) {
+		boolean found = false;
+		List<List<Integer>> availableSlots;
+		depth = depth + 1;
+		
+		if (event == null) {
+			return true;
+		}
+		
+		if (suitableSlotsMap.get(event.getId()) != null) {
+			availableSlots = suitableSlotsMap.get(event.getId());
+		} else {
+			availableSlots = new ArrayList<List<Integer>>();
+		}
+		
+		if (availableSlots.size() == 0 || depth == 14) {
+			return false;
+		}
+		
+		if (availableSlots.size() == 0) {
+			for (int i = 0; i < availableSlots.size(); i++) {
+				int roomId = availableSlots.get(i).get(0);
+				int slot = availableSlots.get(i).get(1);
+				
+				if (rooms.get(roomId).getSlot(i) == null && studentsNoClash(event, slot)) {
+					rooms.get(roomId).setSlot(slot, event);
+					
+					return true;
+				}
+			}
+		}
+		
+		for (Room room : event.getSuitableRooms()) {
+			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				if (studentsNoClash(event, i)) {
+					
+					if (locate(rooms.get(room.getId()).getSlot(i), depth)) {
+						rooms.get(room.getId()).setSlot(i, event);
+						found = true;
+						break;
+					}
+				}
+			}
+			
+			if (found) {
+				break;
+			}
 		}
 		
 		return found;
