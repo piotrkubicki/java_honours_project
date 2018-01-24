@@ -19,7 +19,7 @@ public class BetterMutation extends Operator {
 		double max = 1F;
 		
 		for (Individual ind : individuals) {
-			List<Slot> permutation = ind.getPermutation();
+			List<Slot> permutation = ind.getSlotsPermutation();
 			
 			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
 				double p = min = rand.nextFloat() * (max - min);
@@ -32,7 +32,7 @@ public class BetterMutation extends Operator {
 				}
 			}
 			
-			result.add(new Individual(permutation));
+			result.add(new Individual(permutation, ind.getEventsPermutation()));
 		}
 		
 		return result;

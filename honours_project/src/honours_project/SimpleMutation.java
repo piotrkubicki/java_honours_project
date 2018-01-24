@@ -15,7 +15,7 @@ public class SimpleMutation extends Operator {
 		List<Individual> result = new ArrayList<Individual>();
 		
 		for (Individual ind : individuals) {
-			List<Slot> permutation = ind.getPermutation();
+			List<Slot> permutation = ind.getSlotsPermutation();
 			
 			int index1 = rand.nextInt(max);
 			int index2 = rand.nextInt(max);
@@ -24,7 +24,7 @@ public class SimpleMutation extends Operator {
 			permutation.set(index1, permutation.get(index2));
 			permutation.set(index2, temp);
 			
-			result.add(new Individual(permutation));
+			result.add(new Individual(permutation, ind.getEventsPermutation()));
 		}
 		
 		return result;

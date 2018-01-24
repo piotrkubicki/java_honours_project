@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +17,8 @@ import java.util.stream.Collectors;
 
 public class Individual {
 	private List<Room> rooms = new ArrayList<Room>();
-	private List<Slot> permutation = new ArrayList<Slot>();
+	private List<Slot> slotsPermutation;
+	private List<Integer> eventsPermutation;
 	private Map<Integer, Event> unplacedEvents = new HashMap<Integer, Event>();
 	private int fitness = 0;
 	
@@ -24,7 +28,8 @@ public class Individual {
 	private int three = 0;
 	
 	public Individual() {
-		permutation = new ArrayList<Slot>();
+		slotsPermutation = new ArrayList<Slot>();
+		eventsPermutation = new ArrayList<Integer>();
 		
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
@@ -34,26 +39,26 @@ public class Individual {
 		}
 		
 		for (Event event : Evolution.events) {
+			eventsPermutation.add(event.getId());
 			unplacedEvents.put(event.getId(), event);
 		}
 		
 		for (Room room : Evolution.rooms) {
 			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 				Slot slot = new Slot(room.getId(), i, Evolution.slotsMap.get(Arrays.asList(room.getId(), i)));
-				permutation.add(slot);
+				slotsPermutation.add(slot);
 			}
 		}
 		
-		Collections.shuffle(permutation);
-//		System.out.println(permutation);
-//		permutation = getHarderFirst(permutation);
-//		System.out.println(permutation);
+		Collections.shuffle(slotsPermutation);
+		eventsPermutation = getHarderFirst(eventsPermutation);
 		
 		evaluate();
 	}
 	
-	public Individual(List<Slot> permutation) {
-		this.permutation = permutation;
+	public Individual(List<Slot> slotsPermutation, List<Integer> eventsPermutation) {
+		this.slotsPermutation = slotsPermutation;
+		this.eventsPermutation = eventsPermutation;
 		
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
@@ -68,6 +73,49 @@ public class Individual {
 				
 		evaluate();
 	}
+	
+	public List<Integer> getEventsPermutation() {
+		return eventsPermutation;
+	}
+
+	public void setEventsPermutation(List<Integer> eventsPermutation) {
+		this.eventsPermutation = eventsPermutation;
+	}
+
+	private List<Integer> getHarderFirst(List<Integer> permutation) {
+		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
+		
+		List<Integer> result = new ArrayList<Integer>();
+		
+		for (Integer i : permutation) {
+			int key = Evolution.events.get(i).getSuitableRooms().size();
+			
+			temp.put(i, key);
+		}
+		
+		ArrayList t = new ArrayList(temp.entrySet());
+		
+		Collections.sort(t, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Map.Entry e1 = (Map.Entry) o1;
+				Map.Entry e2 = (Map.Entry) o2;
+				Integer first = (Integer) e1.getValue();
+				Integer second = (Integer) e2.getValue();
+				
+				return first.compareTo(second);
+			}
+		});
+		
+		Iterator i = t.iterator();
+		
+		while (i.hasNext()) {
+			Map.Entry tt = (Map.Entry) i.next();
+			result.add((Integer) tt.getKey());
+		}
+		
+		return result;
+	}
+
 	
 	public List<Room> getRooms() {
 		return rooms;
@@ -89,12 +137,12 @@ public class Individual {
 		return clash;
 	}
 
-	public List<Slot> getPermutation() {
-		return permutation;
+	public List<Slot> getSlotsPermutation() {
+		return slotsPermutation;
 	}
 
-	public void setPermutation(List<Slot> permutation) {
-		this.permutation = permutation;
+	public void setSlotsPermutation(List<Slot> permutation) {
+		this.slotsPermutation = permutation;
 	}
 
 	public int getFitness() {
@@ -209,65 +257,48 @@ public class Individual {
 	}
 	
 	public void createPhenotype() {
-		for (Slot slot : permutation) {
-			boolean found = false;
-			
-			if (!unplacedEvents.isEmpty()) {
+		for (Integer eventId : eventsPermutation) {
+//			boolean found = false;
+		
+			for (Slot slot : slotsPermutation) {
+				Event event = Evolution.events.get(eventId);
 				
-				for (Integer eventId : slot.getPossibleEvents()) {
-					
-					if (unplacedEvents.containsKey(eventId)) {
-						Event event = unplacedEvents.get(eventId);
-						
-						if (studentsNoClash(event, slot.getSlotId())) {
-							slot.setAllocatedEvent(event);
-							unplacedEvents.remove(eventId);
-							found = true;
-						}
-					}
-					
-					if (found) {
-						break;
-					}
+				if (slot.getAllocatedEvent() == null && slot.getPossibleEvents().contains(eventId) && studentsNoClash(event, slot.getSlotId())) {
+					slot.setAllocatedEvent(event);
+					unplacedEvents.remove(eventId);
+					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
+					break;
 				}
 			}
-			
-			rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 		}
 	}
 	
-//	private List<Integer> getHarderFirst(List<Integer> permutation) {
-//		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
-//		
-//		List<Integer> result = new ArrayList<Integer>();
-//		
-//		for (Integer i : permutation) {
-//			int key = Evolution.events.get(i).getSuitableRooms().size();
+//	public void createPhenotype() {
+//		for (Slot slot : slotsPermutation) {
+//			boolean found = false;
 //			
-//			temp.put(i, key);
-//		}
-//		
-//		ArrayList t = new ArrayList(temp.entrySet());
-//		
-//		Collections.sort(t, new Comparator() {
-//			public int compare(Object o1, Object o2) {
-//				Map.Entry e1 = (Map.Entry) o1;
-//				Map.Entry e2 = (Map.Entry) o2;
-//				Integer first = (Integer) e1.getValue();
-//				Integer second = (Integer) e2.getValue();
+//			if (!unplacedEvents.isEmpty()) {
 //				
-//				return first.compareTo(second);
+//				for (Integer eventId : slot.getPossibleEvents()) {
+//					
+//					if (unplacedEvents.containsKey(eventId)) {
+//						Event event = unplacedEvents.get(eventId);
+//						
+//						if (studentsNoClash(event, slot.getSlotId())) {
+//							slot.setAllocatedEvent(event);
+//							unplacedEvents.remove(eventId);
+//							found = true;
+//						}
+//					}
+//					
+//					if (found) {
+//						break;
+//					}
+//				}
 //			}
-//		});
-//		
-//		Iterator i = t.iterator();
-//		
-//		while (i.hasNext()) {
-//			Map.Entry tt = (Map.Entry) i.next();
-//			result.add((Integer) tt.getKey());
+//			
+//			rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 //		}
-//		
-//		return result;
 //	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot

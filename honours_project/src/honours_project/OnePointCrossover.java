@@ -36,15 +36,15 @@ public class OnePointCrossover extends Operator {
 				int p1Index = -1;
 				int p2Index = -1;
 				
-				for (int k = 0; k < parent1.getPermutation().size(); k++) {
-					if (parent1.getPermutation().get(k).getRoomId() == i && parent1.getPermutation().get(k).getSlotId() == j) {
+				for (int k = 0; k < parent1.getSlotsPermutation().size(); k++) {
+					if (parent1.getSlotsPermutation().get(k).getRoomId() == i && parent1.getSlotsPermutation().get(k).getSlotId() == j) {
 						p1Index = k;
 						break;
 					}
 				}
 				
-				for (int k = 0; k < parent2.getPermutation().size(); k++) {
-					if (parent2.getPermutation().get(k).getRoomId() == i && parent2.getPermutation().get(k).getSlotId() == j) {
+				for (int k = 0; k < parent2.getSlotsPermutation().size(); k++) {
+					if (parent2.getSlotsPermutation().get(k).getRoomId() == i && parent2.getSlotsPermutation().get(k).getSlotId() == j) {
 						p2Index = k;
 						break;
 					}
@@ -86,8 +86,8 @@ public class OnePointCrossover extends Operator {
 			}
 		}
 
-		Individual child1 = new Individual(firstPermutation);
-		Individual child2 = new Individual(secondPermutation);
+		Individual child1 = new Individual(firstPermutation, parent1.getEventsPermutation());
+		Individual child2 = new Individual(secondPermutation, parent2.getEventsPermutation());
 		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child1);
