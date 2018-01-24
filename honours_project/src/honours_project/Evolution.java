@@ -19,7 +19,9 @@ public class Evolution extends Observable implements Runnable {
 	
 	public static String filename = "";
 	
-	public static int POPULATION_SIZE = 0;
+	public static int POPULATION_SIZE;
+	public static int TOURNAMENT_SIZE;
+	public static int MUTATION_FACTOR;
 	public static int EVENTS_NUMBER;
 	public static int ROOMS_NUMBER;
 	public static int FEATURES_NUMBER;
@@ -76,7 +78,7 @@ public class Evolution extends Observable implements Runnable {
 		Evolution.filename = filename;
 	}
 	
-	public void setPopulationSize(int size) {
+	public static void setPopulationSize(int size) {
 		POPULATION_SIZE = size;
 	}
 	
@@ -94,6 +96,22 @@ public class Evolution extends Observable implements Runnable {
 		}
 	}
 	
+	public static int getTournamentSize() {
+		return TOURNAMENT_SIZE;
+	}
+
+	public static void setTournamentSize(int tournamentSize) {
+		TOURNAMENT_SIZE = tournamentSize;
+	}
+
+	public static int getMutationSize() {
+		return MUTATION_FACTOR;
+	}
+
+	public static void setMutationSize(int mutationFactor) {
+		MUTATION_FACTOR = mutationFactor;
+	}
+
 	public void prepareData() {
 		roomsSizes = new ArrayList<Integer>();
 		studentsData = new ArrayList<Integer>();
