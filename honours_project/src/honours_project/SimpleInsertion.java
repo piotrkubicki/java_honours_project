@@ -9,7 +9,7 @@ public class SimpleInsertion extends Operator {
 		while (individuals.size() > Evolution.POPULATION_SIZE) {
 			Individual worst = individuals.get(0);
 			
-			for (int i = 1; i < individuals.size(); i++) {
+			for (int i = 1; i < individuals.size() - 2; i++) {
 				if (worst.isBetter(individuals.get(i))) {
 					worst = individuals.get(i);
 				}

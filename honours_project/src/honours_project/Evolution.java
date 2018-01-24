@@ -5,9 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeMap;
@@ -45,6 +48,7 @@ public class Evolution extends Observable implements Runnable {
 	
 	// map slots with suitable events, key is a list with room id as first and slot id as second element
 	protected static Map<List<Integer>, List<Integer>> slotsMap = new HashMap<List<Integer>, List<Integer>>();
+	protected static Map<Integer, List<Event>> eventsMap = new TreeMap<Integer, List<Event>>();
 
 	private List<Individual> population;
 	private Operator selector;
@@ -54,11 +58,7 @@ public class Evolution extends Observable implements Runnable {
 	private Operator findBest;
 	
 	Individual best = null;
-	
-	private boolean timeEvolution;
-	private boolean progressEvolution;
-	
-	private long TIME_PER_RUN;
+
 	private int generation;
 	
 	boolean running = true;
@@ -67,7 +67,7 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new SimpleSelect();
 		crossover = new OnePointCrossover();
-		mutator = new BetterMutation(0.001);
+		mutator = new SimpleMutation();
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
@@ -210,7 +210,7 @@ public class Evolution extends Observable implements Runnable {
 			for (int i = 0; i < EVENTS_NUMBER; i++) {
 				events.add(new Event(i, eventsFeatures.get(i), rooms, students));
 			}
-			
+			prepareEventsMap();
 			prepareSlotsMap();
 			
 		} catch (IOException e) {
@@ -219,10 +219,38 @@ public class Evolution extends Observable implements Runnable {
 		}
 	}
 	
-	private void prepareSlotsMap() {
+	private void prepareEventsMap() {
+		for (Event event : events) {
+			if (eventsMap.containsKey(event.getSuitableRooms().size())) {
+				eventsMap.get(event.getSuitableRooms().size()).add(event);
+			} else {
+				eventsMap.put(event.getSuitableRooms().size(), new ArrayList<Event>(Arrays.asList(event)));
+			}
+		}
+	}
+	
+	private static List<Event> getEventsPermutation() {
+		List<Event> eventsPermutation = new ArrayList<Event>();
+		
+		Iterator<Entry<Integer, List<Event>>> iter = eventsMap.entrySet().iterator();
+		
+		while (iter.hasNext()) {
+			Map.Entry<Integer, List<Event>> pair = iter.next();
+			List<Event> e = pair.getValue();
+			Collections.shuffle(e);
+			
+			for (Event i : e) {
+				eventsPermutation.add(i);
+			}
+		}
+		
+		return eventsPermutation;
+	}
+	
+	public static void prepareSlotsMap() {
 		for (Room room : Evolution.rooms) {
 			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
-				List<Integer> suitableEvents = findEvents(room, events);
+				List<Integer> suitableEvents = findEvents(room, getEventsPermutation());
 				slotsMap.put(Arrays.asList(room.getId(), i),suitableEvents);
 			}
 		}
@@ -293,6 +321,10 @@ public class Evolution extends Observable implements Runnable {
 				best = findBest.execute(population).get(0);
 				
 				generation++;
+				
+				for (Individual ind : childs) {
+					System.out.println("CHILD: " + ind.unplacedEventsNumber() + " " + ind.getFitness());
+				}
 	
 				notifyAllObservers();
 			}
@@ -326,8 +358,8 @@ public class Evolution extends Observable implements Runnable {
 		}).start();
 	}
 	
-	private List<Integer> findEvents(Room room, List<Event> events) {
-		TreeMap<Integer, Integer> temp = new TreeMap<Integer, Integer>();
+	private static List<Integer> findEvents(Room room, List<Event> events) {
+		Map<Integer, Integer> temp = new TreeMap<Integer, Integer>();
 		List<Integer> possibleEvents = new ArrayList<Integer>();
 		
 		for (Event event : events) {

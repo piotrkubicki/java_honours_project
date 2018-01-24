@@ -36,7 +36,7 @@ public class Individual {
 		for (Event event : Evolution.events) {
 			unplacedEvents.put(event.getId(), event);
 		}
-		
+		Evolution.prepareSlotsMap();
 		for (Room room : Evolution.rooms) {
 			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 				Slot slot = new Slot(room.getId(), i, Evolution.slotsMap.get(Arrays.asList(room.getId(), i)));
@@ -235,40 +235,6 @@ public class Individual {
 			rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 		}
 	}
-	
-//	private List<Integer> getHarderFirst(List<Integer> permutation) {
-//		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
-//		
-//		List<Integer> result = new ArrayList<Integer>();
-//		
-//		for (Integer i : permutation) {
-//			int key = Evolution.events.get(i).getSuitableRooms().size();
-//			
-//			temp.put(i, key);
-//		}
-//		
-//		ArrayList t = new ArrayList(temp.entrySet());
-//		
-//		Collections.sort(t, new Comparator() {
-//			public int compare(Object o1, Object o2) {
-//				Map.Entry e1 = (Map.Entry) o1;
-//				Map.Entry e2 = (Map.Entry) o2;
-//				Integer first = (Integer) e1.getValue();
-//				Integer second = (Integer) e2.getValue();
-//				
-//				return first.compareTo(second);
-//			}
-//		});
-//		
-//		Iterator i = t.iterator();
-//		
-//		while (i.hasNext()) {
-//			Map.Entry tt = (Map.Entry) i.next();
-//			result.add((Integer) tt.getKey());
-//		}
-//		
-//		return result;
-//	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
 	private boolean studentsNoClash(Event event, int slot) {

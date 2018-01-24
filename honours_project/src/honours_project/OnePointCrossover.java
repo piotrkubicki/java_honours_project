@@ -31,14 +31,16 @@ public class OnePointCrossover extends Operator {
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
 			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
 				step++;
-				Slot slot1 = new Slot(i, j, Evolution.slotsMap.get(Arrays.asList(i, j)));
-				Slot slot2 = new Slot(i, j, Evolution.slotsMap.get(Arrays.asList(i, j)));
+				
 				int p1Index = -1;
+				Slot p1Slot = null;
 				int p2Index = -1;
+				Slot p2Slot = null;
 				
 				for (int k = 0; k < parent1.getPermutation().size(); k++) {
 					if (parent1.getPermutation().get(k).getRoomId() == i && parent1.getPermutation().get(k).getSlotId() == j) {
 						p1Index = k;
+						p1Slot = parent1.getPermutation().get(k);
 						break;
 					}
 				}
@@ -46,6 +48,7 @@ public class OnePointCrossover extends Operator {
 				for (int k = 0; k < parent2.getPermutation().size(); k++) {
 					if (parent2.getPermutation().get(k).getRoomId() == i && parent2.getPermutation().get(k).getSlotId() == j) {
 						p2Index = k;
+						p2Slot = parent2.getPermutation().get(k);
 						break;
 					}
 				}
@@ -57,7 +60,7 @@ public class OnePointCrossover extends Operator {
 						if (p1Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
 							p1Index = 0;
 					}
-					firstPermutation.set(p1Index, slot1);
+					firstPermutation.set(p1Index, new Slot(i, j, p1Slot.getPossibleEvents()));
 					
 					while (secondPermutation.get(p2Index) != null) {
 						p2Index++;
@@ -65,7 +68,7 @@ public class OnePointCrossover extends Operator {
 						if (p2Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
 							p2Index = 0;
 					}
-					secondPermutation.set(p2Index, slot2);
+					secondPermutation.set(p2Index, new Slot(i, j, p2Slot.getPossibleEvents()));
 				} else {
 					while (firstPermutation.get(p2Index) != null) {
 						p2Index++;
@@ -73,7 +76,7 @@ public class OnePointCrossover extends Operator {
 						if (p2Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
 							p2Index = 0;
 					}
-					firstPermutation.set(p2Index, slot1);
+					firstPermutation.set(p2Index, new Slot(i, j, p2Slot.getPossibleEvents()));
 					
 					while (secondPermutation.get(p1Index) != null) {
 						p1Index++;
@@ -81,7 +84,7 @@ public class OnePointCrossover extends Operator {
 						if (p1Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
 							p1Index = 0;
 					}
-					secondPermutation.set(p1Index, slot2);
+					secondPermutation.set(p1Index, new Slot(i, j, p1Slot.getPossibleEvents()));
 				}
 			}
 		}
