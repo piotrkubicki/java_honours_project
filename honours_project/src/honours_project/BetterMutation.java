@@ -19,14 +19,14 @@ public class BetterMutation extends Operator {
 		double max = 1F;
 		
 		for (Individual ind : individuals) {
-			List<Integer> permutation = ind.getPermutation();
+			List<Slot> permutation = ind.getPermutation();
 			
 			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
 				double p = min = rand.nextFloat() * (max - min);
 				
 				if (p > probabilityFactor) {
 					int index = rand.nextInt(Evolution.EVENTS_NUMBER);
-					int temp = permutation.get(index);
+					Slot temp = permutation.get(index);
 					permutation.set(index, permutation.get(i));
 					permutation.set(i, temp);
 				}

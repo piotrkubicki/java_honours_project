@@ -15,12 +15,12 @@ public class SimpleMutation extends Operator {
 		List<Individual> result = new ArrayList<Individual>();
 		
 		for (Individual ind : individuals) {
-			List<Integer> permutation = ind.getPermutation();
+			List<Slot> permutation = ind.getPermutation();
 			
 			int index1 = rand.nextInt(max);
 			int index2 = rand.nextInt(max);
 			
-			int temp = permutation.get(index1);
+			Slot temp = permutation.get(index1);
 			permutation.set(index1, permutation.get(index2));
 			permutation.set(index2, temp);
 			

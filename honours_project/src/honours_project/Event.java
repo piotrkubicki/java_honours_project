@@ -9,15 +9,24 @@ import java.util.TreeMap;
 public class Event {
 	private int eventId;
 	private List<Student> students = new ArrayList<Student>();
-	private List<Room> suitableRooms = new ArrayList<Room>(); 
+	private List<Room> suitableRooms = new ArrayList<Room>();
+	private List<Integer> features;
 	
 	public Event(int eventId, List<Integer> features, List<Room> rooms, List<Student> students) {
 		this.eventId = eventId;
-		
+		this.features = features;
 		setStudents(students);
 		findRooms(features, rooms);
 	}
 	
+	public List<Integer> getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(List<Integer> features) {
+		this.features = features;
+	}
+
 	public int getId() {
 		return eventId;
 	}
