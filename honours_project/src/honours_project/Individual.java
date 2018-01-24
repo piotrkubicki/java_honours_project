@@ -45,9 +45,6 @@ public class Individual {
 		}
 		
 		Collections.shuffle(permutation);
-//		System.out.println(permutation);
-//		permutation = getHarderFirst(permutation);
-//		System.out.println(permutation);
 		
 		evaluate();
 	}
@@ -65,7 +62,7 @@ public class Individual {
 		for (Event event : Evolution.events) {
 			unplacedEvents.put(event.getId(), event);
 		}
-				
+
 		evaluate();
 	}
 	
@@ -119,8 +116,21 @@ public class Individual {
 		fitness = single + end + three + missedEventsPenalty;
 	}
 	
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
+	}
+
+	public Map<Integer, Event> getUnplacedEvents() {
+		return unplacedEvents;
+	}
+
+	public void setUnplacedEvents(Map<Integer, Event> unplacedEvents) {
+		this.unplacedEvents = unplacedEvents;
+	}
+
 	private void singleEvents() {
 		List<Integer> students = new ArrayList<Integer>();
+		single = 0;
 		
 		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			for (Room room : rooms) {
@@ -151,6 +161,8 @@ public class Individual {
 	
 	// calculate students having events in last slot of the day
 	private void endOfDayEvents() {
+		end = 0;
+		
 		for (int i = 1; i < 6; i++) {
 			int index = i * 9 - 1;
 			
@@ -171,6 +183,7 @@ public class Individual {
 	}
 	
 	private void moreThanThreeEvents() {
+		three = 0;
 		List<List<Integer>> students = new ArrayList<List<Integer>>();
 		
 		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {

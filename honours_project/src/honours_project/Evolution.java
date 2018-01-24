@@ -47,8 +47,8 @@ public class Evolution extends Observable implements Runnable {
 	public static List<Student> students;
 	
 	// map slots with suitable events, key is a list with room id as first and slot id as second element
-	protected static Map<List<Integer>, List<Integer>> slotsMap = new HashMap<List<Integer>, List<Integer>>();
-	protected static Map<Integer, List<Event>> eventsMap = new TreeMap<Integer, List<Event>>();
+	protected static Map<List<Integer>, List<Integer>> slotsMap;
+	protected static Map<Integer, List<Event>> eventsMap;
 
 	private List<Individual> population;
 	private Operator selector;
@@ -56,6 +56,7 @@ public class Evolution extends Observable implements Runnable {
 	private Operator mutator;
 	private Operator insertion;
 	private Operator findBest;
+	private Operator localSearch;
 	
 	Individual best = null;
 
@@ -70,6 +71,7 @@ public class Evolution extends Observable implements Runnable {
 		mutator = new SimpleMutation();
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
+		localSearch = new LocalSearch();
 	}
 	
 	public void setFile(String filename) {
@@ -271,11 +273,12 @@ public class Evolution extends Observable implements Runnable {
 	private void initialize() {
 		state = State.INITIALIZE;
 		running = true;
+		slotsMap = new HashMap<List<Integer>, List<Integer>>();
+		eventsMap = new TreeMap<Integer, List<Event>>();
 		population = new ArrayList<Individual>();
 		generation = 0;
 		best = null;
 		notifyAllObservers();
-		
 		starting();
 	}
 	
@@ -316,6 +319,7 @@ public class Evolution extends Observable implements Runnable {
 				List<Individual> childs = new ArrayList<Individual>();
 				childs.addAll(crossover.execute(parents));
 				mutator.execute(childs);
+//				localSearch.execute(childs);
 				population.addAll(childs);
 				insertion.execute(population);
 				best = findBest.execute(population).get(0);
@@ -325,7 +329,7 @@ public class Evolution extends Observable implements Runnable {
 				for (Individual ind : childs) {
 					System.out.println("CHILD: " + ind.unplacedEventsNumber() + " " + ind.getFitness());
 				}
-	
+				
 				notifyAllObservers();
 			}
 		}
