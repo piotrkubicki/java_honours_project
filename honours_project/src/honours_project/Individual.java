@@ -70,6 +70,8 @@ public class Individual {
 		for (Event event : Evolution.events) {
 			unplacedEvents.put(event.getId(), event);
 		}
+		
+		this.eventsPermutation = getHarderFirst(this.eventsPermutation);
 				
 		evaluate();
 	}
