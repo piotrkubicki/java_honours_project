@@ -111,6 +111,10 @@ public class AppWindow extends JFrame implements Observer {
 	private JLabel runNumberTxt;
 	private JLabel runElapsedTimeLabel;
 	private JLabel runElapsedTimeTxt;
+	private JLabel tournamentSizeLabel;
+	private JTextField tournamenSizeTextField;
+	private JLabel mutationFactorLabel;
+	private JTextField mutationFactorTextField;
 
 	/**
 	 * Create the frame.
@@ -167,7 +171,7 @@ public class AppWindow extends JFrame implements Observer {
 		
 		panel_4 = new JPanel();
 		panel_3.add(panel_4);
-		panel_4.setBorder(new EmptyBorder(10, 10, 10, 10));
+		panel_4.setBorder(new EmptyBorder(10, 10, 10, 0));
 		panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		runTimeLabel = new JLabel(language.getRunTime() + " (s):");
@@ -190,6 +194,20 @@ public class AppWindow extends JFrame implements Observer {
 		populationSizeTextField = new JTextField();
 		panel_4.add(populationSizeTextField);
 		populationSizeTextField.setColumns(10);
+		
+		tournamentSizeLabel = new JLabel(language.getTournamenSize() + " :");
+		panel_4.add(tournamentSizeLabel);
+		
+		tournamenSizeTextField = new JTextField();
+		panel_4.add(tournamenSizeTextField);
+		tournamenSizeTextField.setColumns(10);
+		
+		mutationFactorLabel = new JLabel(language.getMutationFactor() + " :");
+		panel_4.add(mutationFactorLabel);
+		
+		mutationFactorTextField = new JTextField();
+		panel_4.add(mutationFactorTextField);
+		mutationFactorTextField.setColumns(10);
 		
 		panel_6 = new JPanel();
 		panel_3.add(panel_6);
@@ -528,6 +546,8 @@ public class AppWindow extends JFrame implements Observer {
 				String runTime = runTimeTextField.getText();
 				String runsNumber = runsTextField.getText();
 				String populationSize = populationSizeTextField.getText();
+				String tournamentSize = tournamenSizeTextField.getText();
+				String mutationFactor = mutationFactorTextField.getText();
 				
 				Hashtable<List<JTextField>, List<Rules>> input = new Hashtable<List<JTextField>, List<Rules>>();
 				input.put(new ArrayList<JTextField>(Arrays.asList(loadFileTextField)), new ArrayList<Rules>(Arrays.asList(Rules.REQUIRED)));
@@ -554,13 +574,24 @@ public class AppWindow extends JFrame implements Observer {
 							evolution.setRunTime(0);
 						}
 						
-						evolution.setPopulationSize(Integer.parseInt(populationSize));
+						if (tournamentSize.equals("")) {
+							tournamentSize = "0";
+						}
+						
+						if (mutationFactor.equals("")) {
+							mutationFactor = "0";
+						}
+						
+						Evolution.setPopulationSize(Integer.parseInt(populationSize));
+						Evolution.setMutationSize(Integer.parseInt(mutationFactor));
+						Evolution.setTournamentSize(Integer.parseInt(tournamentSize));
 						
 						Thread evolve = new Thread(evolution);
 						evolve.start();
 					} else if (startButton.getText() == language.getStop()) {
 						evolution.setRunsNumber(0);
 						evolution.stopEvolution();
+						timer.stop();
 					}
 				}
 			}

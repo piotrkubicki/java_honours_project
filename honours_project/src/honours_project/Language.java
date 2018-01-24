@@ -22,6 +22,8 @@ public abstract class Language {
 	public abstract String getFeasibility();
 	public abstract String getClear();
 	public abstract String getElapsedTime();
+	public abstract String getTournamenSize();
+	public abstract String getMutationFactor();
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();
