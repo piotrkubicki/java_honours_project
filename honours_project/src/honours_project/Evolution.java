@@ -21,7 +21,7 @@ public class Evolution extends Observable implements Runnable {
 	
 	public static int POPULATION_SIZE;
 	public static int TOURNAMENT_SIZE;
-	public static int MUTATION_FACTOR;
+	public static double MUTATION_FACTOR;
 	public static int EVENTS_NUMBER;
 	public static int ROOMS_NUMBER;
 	public static int FEATURES_NUMBER;
@@ -57,22 +57,11 @@ public class Evolution extends Observable implements Runnable {
 	
 	Individual best = null;
 	
-	private boolean timeEvolution;
-	private boolean progressEvolution;
-	
-	private long TIME_PER_RUN;
 	private int generation;
 	
 	boolean running = true;
 	
-	public Evolution() {
-		population = new ArrayList<Individual>();
-		selector = new NTournamentSelect(10);
-		crossover = new SinglePointCrossover();
-		mutator = new MultiGenesMutation(0.001);
-		insertion = new SimpleInsertion();
-		findBest = new FindBest();
-	}
+	public Evolution() {}
 	
 	public void setFile(String filename) {
 		Evolution.filename = filename;
@@ -101,14 +90,15 @@ public class Evolution extends Observable implements Runnable {
 	}
 
 	public static void setTournamentSize(int tournamentSize) {
+		System.out.println(tournamentSize);
 		TOURNAMENT_SIZE = tournamentSize;
 	}
 
-	public static int getMutationSize() {
+	public static double getMutationSize() {
 		return MUTATION_FACTOR;
 	}
 
-	public static void setMutationSize(int mutationFactor) {
+	public static void setMutationSize(double mutationFactor) {
 		MUTATION_FACTOR = mutationFactor;
 	}
 
@@ -235,6 +225,14 @@ public class Evolution extends Observable implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+
+		population = new ArrayList<Individual>();
+		selector = new NTournamentSelect(TOURNAMENT_SIZE, POPULATION_SIZE);
+		crossover = new SinglePointCrossover();
+		mutator = new SingleGeneMutation();
+		insertion = new SimpleInsertion();
+		findBest = new FindBest();
 	}
 	
 	private void prepareSlotsMap() {

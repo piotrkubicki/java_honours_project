@@ -583,7 +583,7 @@ public class AppWindow extends JFrame implements Observer {
 						}
 						
 						Evolution.setPopulationSize(Integer.parseInt(populationSize));
-						Evolution.setMutationSize(Integer.parseInt(mutationFactor));
+						Evolution.setMutationSize(Double.parseDouble(mutationFactor));
 						Evolution.setTournamentSize(Integer.parseInt(tournamentSize));
 						
 						Thread evolve = new Thread(evolution);

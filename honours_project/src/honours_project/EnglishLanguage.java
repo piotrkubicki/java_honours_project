@@ -21,6 +21,8 @@ public class EnglishLanguage extends Language {
 	public static final String FEASIBILITY = "Feasibility";
 	public static final String CLEAR = "Clear";
 	public static final String ELAPSED_TIME = "Elapsed time";
+	public static final String TOURNAMENT_SIZE = "Tournament size";
+	public static final String MUTATION_FACTOR = "Mutation factor";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
@@ -147,5 +149,15 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getRequiredError() {
 		return REQUIRED;
+	}
+
+	@Override
+	public String getTournamenSize() {
+		return TOURNAMENT_SIZE;
+	}
+
+	@Override
+	public String getMutationFactor() {
+		return MUTATION_FACTOR;
 	}
 }

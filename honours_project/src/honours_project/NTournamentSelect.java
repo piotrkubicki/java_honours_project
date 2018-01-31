@@ -4,28 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleSelect extends Operator {
+public class NTournamentSelect extends Operator {
 
+	private int tournamentSize;
+	private int populationSize;
+	
+	public NTournamentSelect(int tournamentSize, int populationSize) {
+		this.tournamentSize = tournamentSize;
+		this.populationSize = populationSize;
+	}
+	
 	@Override
-	public List<Individual> execute(List<Individual> individuals) {
+	public List<Individual> execute(List<Individual> population) {
+		List<Individual> selectedParents = new ArrayList<Individual>();
 		List<Individual> selected = new ArrayList<Individual>();
 		Random rand = new Random();
-		int max = Evolution.POPULATION_SIZE;
 		
 		for (int i = 0; i < 2; i++) {
-			int index = rand.nextInt(max);
-			Individual ind1 = individuals.get(index);
-			index = rand.nextInt(max);
-			Individual ind2 = individuals.get(index);
-			
-			if (ind1.isBetter(ind2)) {
-				selected.add(ind1);
-			} else {
-				selected.add(ind2);
+			while (selected.size() < tournamentSize) {
+				selected.add(population.get(rand.nextInt(populationSize)));
 			}
+			
+			Individual best = selected.get(0);
+			
+			for (int j = 1; j > selected.size(); j++) {
+				if (!best.isBetter(selected.get(j))) {
+					best = selected.get(j);
+				}
+			}
+			
+			selectedParents.add(best);
 		}
 		
-		return selected;
+		return selectedParents;
 	}
 
 }

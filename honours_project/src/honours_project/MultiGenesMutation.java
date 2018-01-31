@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Random;
 
 public class MultiGenesMutation extends Operator {
-	private double probabilityFactor;
 	
-	public MultiGenesMutation(double probabilityFactor) {
-		this.probabilityFactor = probabilityFactor;
+	private double mutationFactor;
+	private int chromosomeLength;
+	
+	public MultiGenesMutation(double mutationFactor, int chromosomeLength) {
+		this.mutationFactor = mutationFactor;
+		this.chromosomeLength = chromosomeLength;
 	}
 	
 	@Override
@@ -22,16 +25,16 @@ public class MultiGenesMutation extends Operator {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
 			List<Integer> eventsPermutation = ind.getEventsPermutation();
 			
-			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
+			for (int i = 0; i < chromosomeLength; i++) {
 				double p = min = rand.nextFloat() * (max - min);
 				
-				if (p > probabilityFactor) {
-					int index = rand.nextInt(Evolution.EVENTS_NUMBER);
+				if (p > mutationFactor) {
+					int index = rand.nextInt(chromosomeLength);
 					Slot temp = slotsPermutation.get(index);
 					slotsPermutation.set(index, slotsPermutation.get(i));
 					slotsPermutation.set(i, temp);
 					
-					index = rand.nextInt(Evolution.EVENTS_NUMBER);
+					index = rand.nextInt(chromosomeLength);
 					
 					Integer tempEvent = eventsPermutation.get(index);
 					eventsPermutation.set(index, eventsPermutation.get(i));
