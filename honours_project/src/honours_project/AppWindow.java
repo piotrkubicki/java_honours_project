@@ -11,15 +11,12 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -195,7 +192,7 @@ public class AppWindow extends JFrame implements Observer {
 		panel_4.add(populationSizeTextField);
 		populationSizeTextField.setColumns(10);
 		
-		tournamentSizeLabel = new JLabel(language.getTournamenSize() + " :");
+		tournamentSizeLabel = new JLabel(language.getTournamenSize() + " *:");
 		panel_4.add(tournamentSizeLabel);
 		
 		tournamenSizeTextField = new JTextField();

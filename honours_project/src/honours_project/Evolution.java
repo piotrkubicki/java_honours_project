@@ -50,22 +50,11 @@ public class Evolution extends Observable implements Runnable {
 	
 	Individual best = null;
 	
-	private boolean timeEvolution;
-	private boolean progressEvolution;
-	
-	private long TIME_PER_RUN;
 	private int generation;
 	
 	boolean running = true;
 	
-	public Evolution() {
-		population = new ArrayList<Individual>();
-		selector = new SimpleSelect();
-		crossover = new SimpleCrossover(10);
-		mutator = new SimpleMutation();
-		insertion = new SimpleInsertion();
-		findBest = new FindBest();
-	}
+	public Evolution() {}
 	
 	public void setFile(String filename) {
 		Evolution.filename = filename;
@@ -226,6 +215,13 @@ public class Evolution extends Observable implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		population = new ArrayList<Individual>();
+		selector = new NTournamentSelect(TOURNAMENT_SIZE, POPULATION_SIZE);
+		crossover = new SinglePointCrossover();
+		mutator = new SingleGeneMutation();
+		insertion = new SimpleInsertion();
+		findBest = new FindBest();
 	}
 	
 	public void stopEvolution() {

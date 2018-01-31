@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleMutation extends Operator {
+public class SingleGeneMutation extends Operator {
 
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {

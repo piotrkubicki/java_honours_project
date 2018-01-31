@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class BetterMutation extends Operator {
+public class MultiGenesMutation extends Operator {
 	private double probabilityFactor;
 	
-	public BetterMutation(double probabilityFactor) {
+	public MultiGenesMutation(double probabilityFactor) {
 		this.probabilityFactor = probabilityFactor;
 	}
 	
