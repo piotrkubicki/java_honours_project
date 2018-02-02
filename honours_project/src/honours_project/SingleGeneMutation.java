@@ -17,13 +17,16 @@ public class SingleGeneMutation extends Operator {
 		for (Individual ind : individuals) {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
 			List<Integer> eventsPermutation = ind.getEventsPermutation();
-			
+			// mutate slots permutation
 			int index1 = rand.nextInt(max);
 			int index2 = rand.nextInt(max);
 			
 			Slot temp = slotsPermutation.get(index1);
 			slotsPermutation.set(index1, slotsPermutation.get(index2));
 			slotsPermutation.set(index2, temp);
+			// mutate events permutation
+			index1 = rand.nextInt(max);
+			index2 = rand.nextInt(max);
 			
 			Integer tempEvent = eventsPermutation.get(index1);
 			eventsPermutation.set(index1, eventsPermutation.get(index2));

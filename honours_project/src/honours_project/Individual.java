@@ -260,48 +260,41 @@ public class Individual {
 	
 	public void createPhenotype() {
 		for (Integer eventId : eventsPermutation) {
-//			boolean found = false;
+			List<Slot> temp = new ArrayList<Slot>();
+			Event event = Evolution.events.get(eventId);
+			boolean found = false;
 		
+			// find feasible slot
 			for (Slot slot : slotsPermutation) {
-				Event event = Evolution.events.get(eventId);
-				
 				if (slot.getAllocatedEvent() == null && slot.getPossibleEvents().contains(eventId) && studentsNoClash(event, slot.getSlotId())) {
+					if (slot.getSlotId() != 0 && (slot.getSlotId() + 1) % 9 == 0) {
+						temp.add(slot);
+					} else {
+						slot.setAllocatedEvent(event);
+						unplacedEvents.remove(eventId);
+						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
+						found = true;
+						break;
+					}
+				}
+			}
+			// if slot not found select temp slot if any
+			if (!found) {
+				for (Slot slot : temp) {
 					slot.setAllocatedEvent(event);
 					unplacedEvents.remove(eventId);
 					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 					break;
 				}
 			}
+			
+			// move temp slots at the end of the permutation
+			for (Slot slot : temp) {
+				slotsPermutation.remove(slot);
+				slotsPermutation.add(slot);
+			}
 		}
 	}
-	
-//	public void createPhenotype() {
-//		for (Slot slot : slotsPermutation) {
-//			boolean found = false;
-//			
-//			if (!unplacedEvents.isEmpty()) {
-//				
-//				for (Integer eventId : slot.getPossibleEvents()) {
-//					
-//					if (unplacedEvents.containsKey(eventId)) {
-//						Event event = unplacedEvents.get(eventId);
-//						
-//						if (studentsNoClash(event, slot.getSlotId())) {
-//							slot.setAllocatedEvent(event);
-//							unplacedEvents.remove(eventId);
-//							found = true;
-//						}
-//					}
-//					
-//					if (found) {
-//						break;
-//					}
-//				}
-//			}
-//			
-//			rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
-//		}
-//	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
 	private boolean studentsNoClash(Event event, int slot) {
