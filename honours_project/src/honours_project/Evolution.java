@@ -230,8 +230,8 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(TOURNAMENT_SIZE, POPULATION_SIZE);
 		crossover = new SinglePointCrossover();
-//		mutator = new SingleGeneMutation();
-		mutator = new MultiGenesMutation(MUTATION_FACTOR, EVENTS_NUMBER);
+		mutator = new SingleGeneMutation();
+//		mutator = new MultiGenesMutation(MUTATION_FACTOR, EVENTS_NUMBER);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}

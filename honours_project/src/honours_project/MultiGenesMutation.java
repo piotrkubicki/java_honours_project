@@ -23,7 +23,7 @@ public class MultiGenesMutation extends Operator {
 		
 		for (Individual ind : individuals) {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
-			List<Integer> eventsPermutation = ind.getEventsPermutation();
+			List<Event> eventsPermutation = ind.getEventsPermutation();
 			
 			for (int i = 0; i < chromosomeLength; i++) {
 				double p = min = rand.nextFloat() * (max - min);
@@ -40,7 +40,7 @@ public class MultiGenesMutation extends Operator {
 				if (p < mutationFactor) {
 					int index = rand.nextInt(chromosomeLength);
 					
-					Integer tempEvent = eventsPermutation.get(index);
+					Event tempEvent = eventsPermutation.get(index);
 					eventsPermutation.set(index, eventsPermutation.get(i));
 					eventsPermutation.set(i, tempEvent);
 				}

@@ -16,7 +16,7 @@ public class SingleGeneMutation extends Operator {
 		
 		for (Individual ind : individuals) {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
-			List<Integer> eventsPermutation = ind.getEventsPermutation();
+			List<Event> eventsPermutation = ind.getEventsPermutation();
 			// mutate slots permutation
 			int index1 = rand.nextInt(max);
 			int index2 = rand.nextInt(max);
@@ -28,7 +28,7 @@ public class SingleGeneMutation extends Operator {
 			index1 = rand.nextInt(max);
 			index2 = rand.nextInt(max);
 			
-			Integer tempEvent = eventsPermutation.get(index1);
+			Event tempEvent = eventsPermutation.get(index1);
 			eventsPermutation.set(index1, eventsPermutation.get(index2));
 			eventsPermutation.set(index2, tempEvent);
 			

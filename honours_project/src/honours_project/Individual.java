@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 public class Individual {
 	private List<Room> rooms = new ArrayList<Room>();
 	private List<Slot> slotsPermutation;
-	private List<Integer> eventsPermutation;
-	private Map<Integer, Event> unplacedEvents = new HashMap<Integer, Event>();
+	private List<Event> eventsPermutation;
+	private List<Event> unplacedEvents;
 	private int fitness = 0;
 	
 	private int clash = 0;
@@ -29,7 +29,8 @@ public class Individual {
 	
 	public Individual() {
 		slotsPermutation = new ArrayList<Slot>();
-		eventsPermutation = new ArrayList<Integer>();
+		eventsPermutation = new ArrayList<Event>();
+		unplacedEvents = new ArrayList<Event>();
 		
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
@@ -39,8 +40,8 @@ public class Individual {
 		}
 		
 		for (Event event : Evolution.events) {
-			eventsPermutation.add(event.getId());
-			unplacedEvents.put(event.getId(), event);
+			eventsPermutation.add(event);
+			unplacedEvents.add(event);
 		}
 		
 		for (Room room : Evolution.rooms) {
@@ -56,9 +57,10 @@ public class Individual {
 		evaluate();
 	}
 	
-	public Individual(List<Slot> slotsPermutation, List<Integer> eventsPermutation) {
+	public Individual(List<Slot> slotsPermutation, List<Event> eventsPermutation) {
 		this.slotsPermutation = slotsPermutation;
 		this.eventsPermutation = eventsPermutation;
+		unplacedEvents = new ArrayList<Event>();
 		
 		// empty rooms
 		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
@@ -68,7 +70,7 @@ public class Individual {
 		}
 		
 		for (Event event : Evolution.events) {
-			unplacedEvents.put(event.getId(), event);
+			unplacedEvents.add(event);
 		}
 		
 		this.eventsPermutation = getHarderFirst(this.eventsPermutation);
@@ -76,21 +78,21 @@ public class Individual {
 		evaluate();
 	}
 	
-	public List<Integer> getEventsPermutation() {
+	public List<Event> getEventsPermutation() {
 		return eventsPermutation;
 	}
 
-	public void setEventsPermutation(List<Integer> eventsPermutation) {
+	public void setEventsPermutation(List<Event> eventsPermutation) {
 		this.eventsPermutation = eventsPermutation;
 	}
 
-	private List<Integer> getHarderFirst(List<Integer> permutation) {
-		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
+	private List<Event> getHarderFirst(List<Event> permutation) {
+		Hashtable<Event, Integer> temp = new Hashtable<Event, Integer>();
 		
-		List<Integer> result = new ArrayList<Integer>();
+		List<Event> result = new ArrayList<Event>();
 		
-		for (Integer i : permutation) {
-			int key = Evolution.events.get(i).getSuitableRooms().size();
+		for (Event i : permutation) {
+			int key = i.getSuitableRooms().size();
 			
 			temp.put(i, key);
 		}
@@ -112,7 +114,7 @@ public class Individual {
 		
 		while (i.hasNext()) {
 			Map.Entry tt = (Map.Entry) i.next();
-			result.add((Integer) tt.getKey());
+			result.add((Event) tt.getKey());
 		}
 		
 		return result;
@@ -259,19 +261,18 @@ public class Individual {
 	}
 	
 	public void createPhenotype() {
-		for (Integer eventId : eventsPermutation) {
+		for (Event event : eventsPermutation) {
 			List<Slot> temp = new ArrayList<Slot>();
-			Event event = Evolution.events.get(eventId);
 			boolean found = false;
 		
 			// find feasible slot
 			for (Slot slot : slotsPermutation) {
-				if (slot.getAllocatedEvent() == null && slot.getPossibleEvents().contains(eventId) && studentsNoClash(event, slot.getSlotId())) {
+				if (slot.getAllocatedEvent() == null && slot.getPossibleEvents().contains(event.getId()) && studentsNoClash(event, slot.getSlotId())) {
 					if (slot.getSlotId() != 0 && (slot.getSlotId() + 1) % 9 == 0) {
 						temp.add(slot);
 					} else {
 						slot.setAllocatedEvent(event);
-						unplacedEvents.remove(eventId);
+						unplacedEvents.remove(event);
 						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 						found = true;
 						break;
@@ -282,7 +283,7 @@ public class Individual {
 			if (!found) {
 				for (Slot slot : temp) {
 					slot.setAllocatedEvent(event);
-					unplacedEvents.remove(eventId);
+					unplacedEvents.remove(event);
 					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
 					break;
 				}
