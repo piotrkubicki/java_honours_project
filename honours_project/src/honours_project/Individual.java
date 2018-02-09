@@ -20,7 +20,7 @@ public class Individual {
 	private List<Slot> slotsPermutation;
 	private List<Event> eventsPermutation;
 	private List<Event> unplacedEvents;
-	private int fitness = 0;
+	private double fitness;
 	
 	private int clash = 0;
 	private int end = 0;
@@ -149,11 +149,11 @@ public class Individual {
 		this.slotsPermutation = permutation;
 	}
 
-	public int getFitness() {
+	public double getFitness() {
 		return fitness;
 	}
 
-	public void setFitness(int fitness) {
+	public void setFitness(double fitness) {
 		this.fitness = fitness;
 	}
 	
@@ -167,8 +167,10 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		int missedEventsPenalty = unplacedEvents.size() * 1000;
-		fitness = single + end + three + missedEventsPenalty;
+		double fitnessFactor = ((double) single / 1000) + ((double) end / 1000) + ((double) three / 1000) + ((double) unplacedEvents.size() / 10);
+//		fitness = (double) 1 / ((double) (unplacedEvents.size())) / 10 + ((double) three / 1000) + ((double) end / 1000) + ((double) single / 10000);
+//		fitness = 1 - (double) 1 / (fitnessFactor + 1);
+		fitness = (unplacedEvents.size() * 1000) + three + single + end;
 	}
 	
 	private void singleEvents() {
@@ -224,9 +226,11 @@ public class Individual {
 	
 	private void moreThanThreeEvents() {
 		List<List<Integer>> students = new ArrayList<List<Integer>>();
+		List<List<Event>> events = new ArrayList<List<Event>>();
 		
 		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
 			List<Integer> subList = new ArrayList<Integer>();
+			List<Event> eventsSubList = new ArrayList<Event>();
 			
 			for (Room room : rooms) {
 				Event event = room.getSlot(i);
@@ -235,9 +239,11 @@ public class Individual {
 					for (Student s : event.getStudents()) {
 						subList.add(s.getStudentId());
 					}
+					eventsSubList.add(event);
 				}
 			}
 			students.add(subList);
+			events.add(eventsSubList);
 			
 			if (students.size() == 3) {
 				List<Integer> flatten = students.stream().flatMap(List::stream).collect(Collectors.toList());
@@ -248,10 +254,29 @@ public class Individual {
 					
 					if (occ > 2) {
 						three++;
+						
+//						for (List<Event> tempSubList : events) {
+//							int sOcc = 0;
+//							
+//							for (Event e : tempSubList) {
+//								if (!e.getStudents().contains(s)) {
+//									sOcc++;
+//								} else if (sOcc > 0)
+//									sOcc--;
+//								System.out.println(sOcc);
+//								if (sOcc >= 3) {
+//									e.setPenalty(1);
+//									System.out.println("?????????????????");
+////									break;
+//									sOcc = 0;
+//								}
+//							}
+//						}
 					}
 				}
 				
 				students.remove(0);
+				events.remove(0);
 			}
 			
 			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
@@ -268,6 +293,11 @@ public class Individual {
 			// find feasible slot
 			for (Slot slot : slotsPermutation) {
 				if (slot.getAllocatedEvent() == null && slot.getPossibleEvents().contains(event.getId()) && studentsNoClash(event, slot.getSlotId())) {
+//					if (event.getPenalty() > 0) {
+//						System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//						temp.add(slot);
+//						event.setPenalty(0);
+//					}
 					if (slot.getSlotId() != 0 && (slot.getSlotId() + 1) % 9 == 0) {
 						temp.add(slot);
 					} else {
@@ -368,16 +398,10 @@ public class Individual {
 	}
 	
 	public boolean isBetter(Individual other) {
-		if (unplacedEventsNumber() < other.unplacedEventsNumber()) {
+		if (getFitness() <= other.getFitness()) {
 			return true;
-		} else if (unplacedEventsNumber() > other.unplacedEventsNumber()) {
-			return false;
 		} else {
-			if (getFitness() <= other.getFitness()) {
-				return true;
-			} else {
-				return false;
-			}
+			return false;
 		}
 	}
 }

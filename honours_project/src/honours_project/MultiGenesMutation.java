@@ -6,11 +6,11 @@ import java.util.Random;
 
 public class MultiGenesMutation extends Operator {
 	
-	private double mutationFactor;
+	private double mutationRate;
 	private int chromosomeLength;
 	
 	public MultiGenesMutation(double mutationFactor, int chromosomeLength) {
-		this.mutationFactor = mutationFactor;
+		this.mutationRate = mutationFactor;
 		this.chromosomeLength = chromosomeLength;
 	}
 	
@@ -18,26 +18,22 @@ public class MultiGenesMutation extends Operator {
 	public List<Individual> execute(List<Individual> individuals) {
 		List<Individual> result = new ArrayList<Individual>();
 		Random rand = new Random();
-		double min = 0F;
-		double max = 1F;
+//		mutationRate = 1/Evolution.EVENTS_NUMBER;
 		
 		for (Individual ind : individuals) {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
 			List<Event> eventsPermutation = ind.getEventsPermutation();
 			
 			for (int i = 0; i < chromosomeLength; i++) {
-				double p = min = rand.nextFloat() * (max - min);
 				
-				if (p < mutationFactor) {
+				if (rand.nextDouble() < mutationRate) {
 					int index = rand.nextInt(chromosomeLength);
 					Slot temp = slotsPermutation.get(index);
 					slotsPermutation.set(index, slotsPermutation.get(i));
 					slotsPermutation.set(i, temp);
 				}
 				
-				p = min = rand.nextFloat() * (max - min);
-				
-				if (p < mutationFactor) {
+				if (rand.nextDouble() < mutationRate) {
 					int index = rand.nextInt(chromosomeLength);
 					
 					Event tempEvent = eventsPermutation.get(index);

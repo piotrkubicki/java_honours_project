@@ -10,7 +10,6 @@ public class SingleGeneMutation extends Operator {
 	public List<Individual> execute(List<Individual> individuals) {
 		Random rand = new Random();
 		int max = Evolution.EVENTS_NUMBER;
-
 		
 		List<Individual> result = new ArrayList<Individual>();
 		
@@ -34,6 +33,13 @@ public class SingleGeneMutation extends Operator {
 			
 			result.add(new Individual(slotsPermutation, eventsPermutation));
 		}
+//		
+//		for (Individual ind : result) {
+//			for (Slot s : ind.getSlotsPermutation()) {
+//				System.out.print(s.getRoomId() + " : " + s.getSlotId() + " ");
+//			}
+//			System.out.println();
+//		}
 		
 		return result;
 	}

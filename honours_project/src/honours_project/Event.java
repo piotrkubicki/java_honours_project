@@ -11,12 +11,14 @@ public class Event {
 	private List<Student> students = new ArrayList<Student>();
 	private List<Room> suitableRooms = new ArrayList<Room>();
 	private List<Integer> features;
+	private int penalty;
 	
 	public Event(int eventId, List<Integer> features, List<Room> rooms, List<Student> students) {
 		this.eventId = eventId;
 		this.features = features;
 		setStudents(students);
 		findRooms(features, rooms);
+		penalty = 0;
 	}
 	
 	public List<Integer> getFeatures() {
@@ -37,6 +39,14 @@ public class Event {
 
 	public List<Student> getStudents() {
 		return students;
+	}
+	
+	public int getPenalty() {
+		return penalty;
+	}
+	
+	public void setPenalty(int penalty) {
+		this.penalty = penalty;
 	}
 	
 	private void findRooms(List<Integer> features, List<Room> rooms) {

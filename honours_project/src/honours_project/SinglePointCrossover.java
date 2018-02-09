@@ -87,13 +87,13 @@ public class SinglePointCrossover extends Operator {
 		}
 
 		Individual child1 = new Individual(firstPermutation, parent1.getEventsPermutation());
-		Individual child2 = new Individual(secondPermutation, parent2.getEventsPermutation());
+//		Individual child2 = new Individual(secondPermutation, parent2.getEventsPermutation());
 //		Individual child1 = new Individual(parent1.getSlotsPermutation(), parent1.getEventsPermutation());
 //		Individual child2 = new Individual(parent2.getSlotsPermutation(), parent2.getEventsPermutation());
 		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child1);
-		result.add(child2);
+//		result.add(child2);
 		
 		return result;
 	}
