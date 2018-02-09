@@ -458,7 +458,7 @@ public class AppWindow extends JFrame implements Observer {
 	
 	private void updateLabels(Individual best) {
 		missedEventsTxt.setText(Integer.toString(best.unplacedEventsNumber()));
-		fitnessTxt.setText(Integer.toString(best.getFitness()));
+		fitnessTxt.setText(Double.toString(best.getFitness()));
 		singleTxt.setText(Integer.toString(best.getSingle()));
 		threeTxt.setText(Integer.toString(best.getThree()));
 		endTxt.setText(Integer.toString(best.getEnd()));

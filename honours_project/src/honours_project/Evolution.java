@@ -54,6 +54,7 @@ public class Evolution extends Observable implements Runnable {
 	private Operator mutator;
 	private Operator insertion;
 	private Operator findBest;
+	private Operator localSearch;
 	
 	Individual best = null;
 	
@@ -234,6 +235,7 @@ public class Evolution extends Observable implements Runnable {
 //		mutator = new MultiGenesMutation(MUTATION_FACTOR, EVENTS_NUMBER);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
+		localSearch = new SwapNextEventLocalSearch();
 	}
 	
 	private void prepareSlotsMap() {
@@ -305,17 +307,34 @@ public class Evolution extends Observable implements Runnable {
 				List<Individual> childs = new ArrayList<Individual>();
 				childs.addAll(crossover.execute(parents));
 				mutator.execute(childs);
+//				childs.add(localSearch.execute(childs).get(0));
 				population.addAll(childs);
 				insertion.execute(population);
+				Individual oldBest = best;
 				best = findBest.execute(population).get(0);
+				
+				if (oldBest != null && !oldBest.isBetter(best)) {
+					best = localSearch.execute(Arrays.asList(best)).get(0);
+					population.remove(oldBest);
+					population.add(best);
+				}
 				
 				generation++;
 	
 				notifyAllObservers();
 				
-				for (Individual ind : childs) {
-					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
-				}
+//				for (Individual ind : childs) {
+//					for (Slot s : ind.getSlotsPermutation()) {
+//						System.out.print(s.getRoomId() + " : " + s.getSlotId() + " ");
+//					}
+//						System.out.println();
+//					
+//					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
+//				}
+				
+//				for (Individual ind : population) {
+//					System.out.println(ind.getFitness());
+//				}
 			}
 		}
 		
