@@ -3,7 +3,6 @@ package honours_project;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class SinglePointCrossover extends Operator {
 
@@ -13,9 +12,8 @@ public class SinglePointCrossover extends Operator {
 	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
-		Random rand = new Random();
 		
-		int cutPoint = rand.nextInt(Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER);
+		int cutPoint = Evolution.randomGenerator.nextInt(Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER);
 		
 		Individual parent1 = individuals.get(0);
 		Individual parent2 = individuals.get(1);

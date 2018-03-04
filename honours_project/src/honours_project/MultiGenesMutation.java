@@ -2,22 +2,20 @@ package honours_project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MultiGenesMutation extends Operator {
 	
-	private double mutationFactor;
+	private double mutationRate;
 	private int chromosomeLength;
 	
-	public MultiGenesMutation(double mutationFactor, int chromosomeLength) {
-		this.mutationFactor = mutationFactor;
+	public MultiGenesMutation(double mutationRate, int chromosomeLength) {
+		this.mutationRate = mutationRate;
 		this.chromosomeLength = chromosomeLength;
 	}
 	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
 		List<Individual> result = new ArrayList<Individual>();
-		Random rand = new Random();
 		double min = 0F;
 		double max = 1F;
 		
@@ -26,19 +24,19 @@ public class MultiGenesMutation extends Operator {
 			List<Integer> eventsPermutation = ind.getEventsPermutation();
 			
 			for (int i = 0; i < chromosomeLength; i++) {
-				double p = min = rand.nextFloat() * (max - min);
+				double p = min = Evolution.randomGenerator.nextFloat() * (max - min);
 				
-				if (p < mutationFactor) {
-					int index = rand.nextInt(chromosomeLength);
+				if (p < mutationRate) {
+					int index = Evolution.randomGenerator.nextInt(chromosomeLength);
 					Slot temp = slotsPermutation.get(index);
 					slotsPermutation.set(index, slotsPermutation.get(i));
 					slotsPermutation.set(i, temp);
 				}
 				
-				p = min = rand.nextFloat() * (max - min);
+				p = min = Evolution.randomGenerator.nextFloat() * (max - min);
 				
-				if (p < mutationFactor) {
-					int index = rand.nextInt(chromosomeLength);
+				if (p < mutationRate) {
+					int index = Evolution.randomGenerator.nextInt(chromosomeLength);
 					
 					Integer tempEvent = eventsPermutation.get(index);
 					eventsPermutation.set(index, eventsPermutation.get(i));

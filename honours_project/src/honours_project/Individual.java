@@ -8,14 +8,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Individual {
+	
 	private List<Room> rooms = new ArrayList<Room>();
 	private List<Slot> slotsPermutation;
 	private List<Integer> eventsPermutation;
@@ -85,7 +86,7 @@ public class Individual {
 	}
 
 	private List<Integer> getHarderFirst(List<Integer> permutation) {
-		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
+		Map<Integer, Integer> temp = new LinkedHashMap<Integer, Integer>();
 		
 		List<Integer> result = new ArrayList<Integer>();
 		

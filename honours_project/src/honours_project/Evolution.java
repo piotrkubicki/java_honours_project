@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.TreeMap;
 
 public class Evolution extends Observable implements Runnable {
@@ -18,6 +19,8 @@ public class Evolution extends Observable implements Runnable {
 	private List<Observer> observers = new ArrayList<Observer>();
 	
 	public static String filename = "";
+	public static long seed = System.currentTimeMillis();
+	public static Random randomGenerator = new Random(seed);
 	
 	public static int POPULATION_SIZE;
 	public static int TOURNAMENT_SIZE;
@@ -230,8 +233,8 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(TOURNAMENT_SIZE, POPULATION_SIZE);
 		crossover = new SinglePointCrossover();
-//		mutator = new SingleGeneMutation();
-		mutator = new MultiGenesMutation(MUTATION_FACTOR, EVENTS_NUMBER);
+		mutator = new SingleGeneMutation();
+//		mutator = new MultiGenesMutation(MUTATION_FACTOR, EVENTS_NUMBER);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
