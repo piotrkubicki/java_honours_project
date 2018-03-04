@@ -9,7 +9,7 @@ public class RandomInsertion extends Operator {
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
 		
-		while (individuals.size() > Evolution.POPULATION_SIZE) {
+		while (individuals.size() > Parameters.populationSize) {
 			List<Individual> temp = new ArrayList<>(); 
 			
 			while (temp.size() < 5) {

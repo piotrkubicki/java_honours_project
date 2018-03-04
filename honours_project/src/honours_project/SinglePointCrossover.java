@@ -6,31 +6,29 @@ import java.util.List;
 
 public class SinglePointCrossover extends Operator {
 
-	
 	public SinglePointCrossover() {
 	}
 	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
 		
-		int cutPoint = Evolution.randomGenerator.nextInt(Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER);
+		int cutPoint = Evolution.randomGenerator.nextInt(Evolution.slotsNumber * Evolution.roomsNumber);
 		
 		Individual parent1 = individuals.get(0);
 		Individual parent2 = individuals.get(1);
 		
 		List<Slot> firstPermutation = new ArrayList<Slot>();
-		List<Slot> secondPermutation = new ArrayList<Slot>();
 		
-		for (int i = 0; i < (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER); i++) {
+		for (int i = 0; i < (Evolution.slotsNumber * Evolution.roomsNumber); i++) {
 			firstPermutation.add(null);
-			secondPermutation.add(null);
 		}
+		
 		int step = 0;
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
-			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
+		
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
+			for (int j = 0; j < Evolution.slotsNumber; j++) {
 				step++;
 				Slot slot1 = new Slot(i, j, Evolution.slotsMap.get(Arrays.asList(i, j)));
-				Slot slot2 = new Slot(i, j, Evolution.slotsMap.get(Arrays.asList(i, j)));
 				int p1Index = -1;
 				int p2Index = -1;
 				
@@ -52,46 +50,26 @@ public class SinglePointCrossover extends Operator {
 					while (firstPermutation.get(p1Index) != null) {
 						p1Index++;
 						
-						if (p1Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
+						if (p1Index >= (Evolution.slotsNumber * Evolution.roomsNumber)) 
 							p1Index = 0;
 					}
 					firstPermutation.set(p1Index, slot1);
-					
-					while (secondPermutation.get(p2Index) != null) {
-						p2Index++;
-						
-						if (p2Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
-							p2Index = 0;
-					}
-					secondPermutation.set(p2Index, slot2);
 				} else {
 					while (firstPermutation.get(p2Index) != null) {
 						p2Index++;
 						
-						if (p2Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
+						if (p2Index >= (Evolution.slotsNumber * Evolution.roomsNumber)) 
 							p2Index = 0;
 					}
 					firstPermutation.set(p2Index, slot1);
-					
-					while (secondPermutation.get(p1Index) != null) {
-						p1Index++;
-						
-						if (p1Index >= (Evolution.SLOTS_NUMBER * Evolution.ROOMS_NUMBER)) 
-							p1Index = 0;
-					}
-					secondPermutation.set(p1Index, slot2);
 				}
 			}
 		}
 
 		Individual child1 = new Individual(firstPermutation, parent1.getEventsPermutation());
-		Individual child2 = new Individual(secondPermutation, parent2.getEventsPermutation());
-//		Individual child1 = new Individual(parent1.getSlotsPermutation(), parent1.getEventsPermutation());
-//		Individual child2 = new Individual(parent2.getSlotsPermutation(), parent2.getEventsPermutation());
 		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child1);
-		result.add(child2);
 		
 		return result;
 	}

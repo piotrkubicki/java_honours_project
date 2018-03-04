@@ -1,7 +1,6 @@
 package honours_project;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,7 +48,7 @@ public class Event {
 			if (room.getSpaces() < students.size()) {
 				feasible = false;
 			} else {
-				for (int i = 0; i < Evolution.FEATURES_NUMBER; i++) {
+				for (int i = 0; i < Evolution.featuresNumber; i++) {
 					List<Integer> roomFeatures = room.getFeatures();
 					if (features.get(i) == 1 && roomFeatures.get(i) == 0) {
 						feasible = false;

@@ -33,7 +33,7 @@ public class Individual {
 		eventsPermutation = new ArrayList<Integer>();
 		
 		// empty rooms
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
@@ -45,7 +45,7 @@ public class Individual {
 		}
 		
 		for (Room room : Evolution.rooms) {
-			for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+			for (int i = 0; i < Evolution.slotsNumber; i++) {
 				Slot slot = new Slot(room.getId(), i, Evolution.slotsMap.get(Arrays.asList(room.getId(), i)));
 				slotsPermutation.add(slot);
 			}
@@ -62,7 +62,7 @@ public class Individual {
 		this.eventsPermutation = eventsPermutation;
 		
 		// empty rooms
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
@@ -173,7 +173,7 @@ public class Individual {
 	private void singleEvents() {
 		List<Integer> students = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.slotsNumber; i++) {
 			for (Room room : rooms) {
 				Event event = room.getSlot(i);
 				
@@ -184,7 +184,7 @@ public class Individual {
 				}
 			}
 			
-			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.roomsNumber - 1) == 0 && i > 0) {
 				Set<Integer> set = new HashSet<Integer>(students);
 				
 				for (Integer s : set) {
@@ -224,7 +224,7 @@ public class Individual {
 	private void moreThanThreeEvents() {
 		List<List<Integer>> students = new ArrayList<List<Integer>>();
 		
-		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.slotsNumber; i++) {
 			List<Integer> subList = new ArrayList<Integer>();
 			
 			for (Room room : rooms) {
@@ -253,7 +253,7 @@ public class Individual {
 				students.remove(0);
 			}
 			
-			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.roomsNumber - 1) == 0 && i > 0) {
 				students = new ArrayList<List<Integer>>();
 			}
 		}
@@ -322,8 +322,8 @@ public class Individual {
 	public void saveSolution(String filename) {
 		Map solution = new HashMap<Integer, Integer[]>();
 		
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
-			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
+			for (int j = 0; j < Evolution.slotsNumber; j++) {
 				Room room = rooms.get(i);
 				Event event = room.getSlot(j);
 				
@@ -337,9 +337,9 @@ public class Individual {
 		FileWriter fw = null;
 		
 		try {
-			fw = new FileWriter(filename);
+			fw = new FileWriter(filename + ".sln");
 			
-			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
+			for (int i = 0; i < Evolution.eventsNumber; i++) {
 				Integer[] pair = (Integer[]) solution.get(i);
 				
 				if (pair != null) {

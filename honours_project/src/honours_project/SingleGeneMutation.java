@@ -7,8 +7,7 @@ public class SingleGeneMutation extends Operator {
 
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
-		int max = Evolution.EVENTS_NUMBER;
-
+		int max = Evolution.eventsNumber;
 		
 		List<Individual> result = new ArrayList<Individual>();
 		
