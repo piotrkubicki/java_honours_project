@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class Individual {
 	private List<Room> rooms = new ArrayList<Room>();
-	private List<Integer> permutation = new ArrayList<Integer>();
+	private List<Integer> eventsPermutation = new ArrayList<Integer>();
 	private List<Event> unplacedEvents = new ArrayList<Event>();
 	private int fitness = 0;
 	
@@ -26,30 +26,37 @@ public class Individual {
 	private int three = 0;
 	
 	public Individual() {
-		permutation = new ArrayList<Integer>();
+		eventsPermutation = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
-			permutation.add(i);
+		for (int i = 0; i < Evolution.eventsNumber; i++) {
+			eventsPermutation.add(i);
 		}
 		
-		Collections.shuffle(permutation);
+		Collections.shuffle(eventsPermutation);
 //		System.out.println(permutation);
-		permutation = getHarderFirst(permutation);
+		eventsPermutation = getHarderFirst(eventsPermutation);
 //		System.out.println(permutation);
 		// empty rooms
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
 		}
+
+		for (Event event : Evolution.events) {
+			eventsPermutation.add(event.getId());
+			unplacedEvents.add(event);
+		}
+
+		eventsPermutation = getHarderFirst(eventsPermutation);
 		
 		evaluate();
 	}
 	
 	public Individual(List<Integer> permutation) {
-		this.permutation = permutation;
+		this.eventsPermutation = permutation;
 		// empty rooms
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room();
 			
 			rooms.add(room);
@@ -79,11 +86,11 @@ public class Individual {
 	}
 
 	public List<Integer> getPermutation() {
-		return permutation;
+		return eventsPermutation;
 	}
 
 	public void setPermutation(List<Integer> permutation) {
-		this.permutation = permutation;
+		this.eventsPermutation = permutation;
 	}
 
 	public int getFitness() {
@@ -111,7 +118,7 @@ public class Individual {
 	private void singleEvents() {
 		List<Integer> students = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.slotsNumber; i++) {
 			for (Room room : rooms) {
 				Event event = room.getSlot(i);
 				
@@ -122,7 +129,7 @@ public class Individual {
 				}
 			}
 			
-			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.roomsNumber - 1) == 0 && i > 0) {
 				Set<Integer> set = new HashSet<Integer>(students);
 				
 				for (Integer s : set) {
@@ -162,7 +169,7 @@ public class Individual {
 	private void moreThanThreeEvents() {
 		List<List<Integer>> students = new ArrayList<List<Integer>>();
 		
-		for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+		for (int i = 0; i < Evolution.slotsNumber; i++) {
 			List<Integer> subList = new ArrayList<Integer>();
 			
 			for (Room room : rooms) {
@@ -191,19 +198,19 @@ public class Individual {
 				students.remove(0);
 			}
 			
-			if ((i + 1) % (Evolution.ROOMS_NUMBER - 1) == 0 && i > 0) {
+			if ((i + 1) % (Evolution.roomsNumber - 1) == 0 && i > 0) {
 				students = new ArrayList<List<Integer>>();
 			}
 		}
 	}
 	
 	public void createPhenotype() {
-		for (Integer eventId : permutation) {
+		for (Integer eventId : eventsPermutation) {
 			Event event = Evolution.events.get(eventId);
 			boolean found = false;
 			
 			for (Room room : event.getSuitableRooms()) {
-				for (int i = 0; i < Evolution.SLOTS_NUMBER; i++) {
+				for (int i = 0; i < Evolution.slotsNumber; i++) {
 					if (rooms.get(room.getId()).getSlot(i) == null && studentsNoClash(event, i)) {
 						rooms.get(room.getId()).setSlot(i, event);
 						found = true;
@@ -281,8 +288,8 @@ public class Individual {
 	public void saveSolution(String filename) {
 		Map solution = new HashMap<Integer, Integer[]>();
 		
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
-			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
+			for (int j = 0; j < Evolution.slotsNumber; j++) {
 				Room room = rooms.get(i);
 				Event event = room.getSlot(j);
 				
@@ -296,9 +303,9 @@ public class Individual {
 		FileWriter fw = null;
 		
 		try {
-			fw = new FileWriter(filename);
+			fw = new FileWriter(filename + ".sln");
 			
-			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
+			for (int i = 0; i < Evolution.eventsNumber; i++) {
 				Integer[] pair = (Integer[]) solution.get(i);
 				
 				if (pair != null) {

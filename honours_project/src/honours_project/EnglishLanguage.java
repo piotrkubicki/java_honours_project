@@ -22,16 +22,19 @@ public class EnglishLanguage extends Language {
 	public static final String CLEAR = "Clear";
 	public static final String ELAPSED_TIME = "Elapsed time";
 	public static final String TOURNAMENT_SIZE = "Tournament size";
-	public static final String MUTATION_FACTOR = "Mutation factor";
+	public static final String MUTATION_RATE = "Mutation rate";
 	
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
+	public static final String SUCCESS_MESSAGE_TITLE = "Success";
 	
 	// MESSAGE BODY
 	public static final String NO_FILE_ERROR = "Please select problem file!";
 	public static final String BEST_ERROR = "Please run program to find solution!";
 	public static final String NO_NUMBER_ERROR = "Please provide number value!";
 	public static final String REQUIRED = "Field is required!";
+	public static final String ERROR_GENERIC = "Ups, something goes wrong. Try again.";
+	public static final String DONE = "Done";
 	
 	public String getRunTime() {
 		return RUN_TIME;
@@ -158,6 +161,21 @@ public class EnglishLanguage extends Language {
 
 	@Override
 	public String getMutationFactor() {
-		return MUTATION_FACTOR;
+		return MUTATION_RATE;
+	}
+
+	@Override
+	public String getDone() {
+		return DONE;
+	}
+
+	@Override
+	public String getSuccessTitle() {
+		return SUCCESS_MESSAGE_TITLE;
+	}
+
+	@Override
+	public String getErrorGeneric() {
+		return ERROR_GENERIC;
 	}
 }

@@ -5,17 +5,18 @@ import java.util.List;
 import java.util.Random;
 
 public class SinglePointCrossover extends Operator {
-	
-	public SinglePointCrossover() {}
+
+	public SinglePointCrossover() {
+	}
 	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
-		Random rand = new Random();
-		int cutPoint = rand.nextInt(Evolution.EVENTS_NUMBER);
+		
+		int cutPoint = Evolution.randomGenerator.nextInt(Evolution.slotsNumber * Evolution.roomsNumber);
 		
 		Individual parent1 = individuals.get(0);
 		Individual parent2 = individuals.get(1);
-		
+
 		List<Integer> firstPermutation = parent1.getPermutation();
 		List<Integer> secondPermutation = parent2.getPermutation();
 		
@@ -31,12 +32,10 @@ public class SinglePointCrossover extends Operator {
 			secondPermutation.add(i, gene);
 		}
 		
-		
 		Individual child1 = new Individual(firstPermutation);
 		Individual child2 = new Individual(secondPermutation);
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child1);
-		result.add(child2);
 		
 		return result;
 	}

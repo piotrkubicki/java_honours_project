@@ -21,11 +21,11 @@ public class MultiGenesMutation extends Operator {
 		for (Individual ind : individuals) {
 			List<Integer> permutation = ind.getPermutation();
 			
-			for (int i = 0; i < Evolution.EVENTS_NUMBER; i++) {
+			for (int i = 0; i < Evolution.eventsNumber; i++) {
 				double p = min = rand.nextFloat() * (max - min);
 				
 				if (p > probabilityFactor) {
-					int index = rand.nextInt(Evolution.EVENTS_NUMBER);
+					int index = rand.nextInt(Evolution.eventsNumber);
 					int temp = permutation.get(index);
 					permutation.set(index, permutation.get(i));
 					permutation.set(i, temp);

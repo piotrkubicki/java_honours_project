@@ -1,6 +1,5 @@
 package honours_project;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -377,6 +376,7 @@ public class AppWindow extends JFrame implements Observer {
 	private void initialize() {
 		startButton.setEnabled(false);
 		clearButton.setEnabled(false);
+		saveButton.setEnabled(false);
 		runNumberTxt.setText(Integer.toString(seriesCounter + 1));
 	}
 	
@@ -412,6 +412,7 @@ public class AppWindow extends JFrame implements Observer {
 		startButton.setText(language.getRun());
 		startButton.setEnabled(true);
 		clearButton.setEnabled(true);
+		saveButton.setEnabled(true);
 	}
 	
 	@Override
@@ -438,8 +439,8 @@ public class AppWindow extends JFrame implements Observer {
 	
 	private void updateTimetables(List<Room> timetable) {
 		
-		for (int i = 0; i < Evolution.ROOMS_NUMBER; i++) {
-			for (int j = 0; j < Evolution.SLOTS_NUMBER; j++) {
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
+			for (int j = 0; j < Evolution.slotsNumber; j++) {
 				Room room = (Room) timetable.get(i);
 				Event event = room.getSlot(j);
 				if (event != null) {
@@ -467,8 +468,8 @@ public class AppWindow extends JFrame implements Observer {
 				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45"
 			};
 		
-		DefaultTableModel table = new DefaultTableModel(new Object[Evolution.ROOMS_NUMBER][Evolution.EVENTS_NUMBER], headers) {
-			boolean[] columnEditables = new boolean[Evolution.EVENTS_NUMBER];
+		DefaultTableModel table = new DefaultTableModel(new Object[Evolution.roomsNumber][Evolution.eventsNumber], headers) {
+			boolean[] columnEditables = new boolean[Evolution.eventsNumber];
 			
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
@@ -498,7 +499,11 @@ public class AppWindow extends JFrame implements Observer {
 					if (rVal == JFileChooser.APPROVE_OPTION) {
 						String filename = saveFile.getSelectedFile().getName();
 						String dir = saveFile.getCurrentDirectory().toString();
-						evolution.saveSolution(dir + "/" + filename);
+						if (evolution.saveSolution(dir + "/" + filename)) {
+							JOptionPane.showMessageDialog(null, language.getSuccessTitle(), language.getDone(), JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(null, language.getErrorTitle(), language.getErrorGeneric(), JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				} else {
 					JOptionPane.showMessageDialog(AppWindow.this, language.getBestError(), language.getErrorTitle(), JOptionPane.ERROR_MESSAGE);
@@ -530,6 +535,7 @@ public class AppWindow extends JFrame implements Observer {
 		public void mouseClicked(MouseEvent e) {
 			if (clearButton.isEnabled()) {
 				clearData();
+				evolution.clear();
 			}
 		}
 	}
@@ -566,9 +572,9 @@ public class AppWindow extends JFrame implements Observer {
 						if (!runTime.equals("")) {
 							time = Integer.parseInt(runTime) * 1000;
 							setRunTime(time);
-							evolution.setRunTime(time);
+							Parameters.setRunTime(time);
 						} else {
-							evolution.setRunTime(0);
+							Parameters.setRunTime(0);
 						}
 						
 						if (tournamentSize.equals("")) {
@@ -579,9 +585,9 @@ public class AppWindow extends JFrame implements Observer {
 							mutationFactor = "0";
 						}
 						
-						Evolution.setPopulationSize(Integer.parseInt(populationSize));
-						Evolution.setMutationSize(Integer.parseInt(mutationFactor));
-						Evolution.setTournamentSize(Integer.parseInt(tournamentSize));
+						Parameters.setPopulationSize(Integer.parseInt(populationSize));
+						Parameters.setMutationSize(Double.parseDouble(mutationFactor));
+						Parameters.setTournamentSize(Integer.parseInt(tournamentSize));
 						
 						Thread evolve = new Thread(evolution);
 						evolve.start();

@@ -8,17 +8,15 @@ public class SingleGeneMutation extends Operator {
 
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
-		Random rand = new Random();
-		int max = Evolution.EVENTS_NUMBER;
 
-		
+		int max = Evolution.eventsNumber;
 		List<Individual> result = new ArrayList<Individual>();
 		
 		for (Individual ind : individuals) {
 			List<Integer> permutation = ind.getPermutation();
 			
-			int index1 = rand.nextInt(max);
-			int index2 = rand.nextInt(max);
+			int index1 = Parameters.randomGenerator.nextInt(max);
+			int index2 = Parameters.randomGenerator.nextInt(max);
 			
 			int temp = permutation.get(index1);
 			permutation.set(index1, permutation.get(index2));

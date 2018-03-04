@@ -27,10 +27,13 @@ public abstract class Language {
 	
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();
+	public abstract String getSuccessTitle();
 	
 	//MESSAGES BODY
 	public abstract String getNoFileError();
 	public abstract String getBestError();
 	public abstract String getNoNumberError();
 	public abstract String getRequiredError();
+	public abstract String getErrorGeneric();
+	public abstract String getDone();
 }
