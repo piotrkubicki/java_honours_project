@@ -2,7 +2,6 @@ package honours_project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class NTournamentSelect extends Operator {
 
@@ -18,11 +17,10 @@ public class NTournamentSelect extends Operator {
 	public List<Individual> execute(List<Individual> population) {
 		List<Individual> selectedParents = new ArrayList<Individual>();
 		List<Individual> selected = new ArrayList<Individual>();
-		Random rand = new Random();
 		
 		for (int i = 0; i < 2; i++) {
 			while (selected.size() < tournamentSize) {
-				selected.add(population.get(rand.nextInt(populationSize)));
+				selected.add(population.get(Evolution.randomGenerator.nextInt(populationSize)));
 			}
 			
 			Individual best = selected.get(0);

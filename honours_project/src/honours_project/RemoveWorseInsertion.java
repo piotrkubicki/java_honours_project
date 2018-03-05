@@ -2,7 +2,7 @@ package honours_project;
 
 import java.util.List;
 
-public class SimpleInsertion extends Operator {
+public class RemoveWorseInsertion extends Operator {
 
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {

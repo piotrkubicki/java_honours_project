@@ -28,14 +28,6 @@ public class Individual {
 	public Individual() {
 		eventsPermutation = new ArrayList<Integer>();
 		
-		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			eventsPermutation.add(i);
-		}
-		
-		Collections.shuffle(eventsPermutation);
-//		System.out.println(permutation);
-		eventsPermutation = getHarderFirst(eventsPermutation);
-//		System.out.println(permutation);
 		// empty rooms
 		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room();

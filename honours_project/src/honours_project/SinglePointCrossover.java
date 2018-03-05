@@ -2,7 +2,6 @@ package honours_project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class SinglePointCrossover extends Operator {
 
@@ -18,7 +17,7 @@ public class SinglePointCrossover extends Operator {
 		Individual parent2 = individuals.get(1);
 
 		List<Integer> firstPermutation = parent1.getPermutation();
-		List<Integer> secondPermutation = parent2.getPermutation();
+//		List<Integer> secondPermutation = parent2.getPermutation();
 		
 		for (int i = cutPoint; i < parent2.getPermutation().size(); i++) {
 			int gene = parent2.getPermutation().get(i);
@@ -26,14 +25,14 @@ public class SinglePointCrossover extends Operator {
 			firstPermutation.add(i, gene);
 		}
 		
-		for (int i = cutPoint; i < parent1.getPermutation().size(); i++) {
-			int gene = parent1.getPermutation().get(i);
-			secondPermutation.remove(parent2.getPermutation().indexOf(gene));
-			secondPermutation.add(i, gene);
-		}
+//		for (int i = cutPoint; i < parent1.getPermutation().size(); i++) {
+//			int gene = parent1.getPermutation().get(i);
+//			secondPermutation.remove(parent2.getPermutation().indexOf(gene));
+//			secondPermutation.add(i, gene);
+//		}
 		
 		Individual child1 = new Individual(firstPermutation);
-		Individual child2 = new Individual(secondPermutation);
+//		Individual child2 = new Individual(secondPermutation);
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child1);
 		

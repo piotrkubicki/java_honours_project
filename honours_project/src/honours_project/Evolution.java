@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import java.util.TreeMap;
 
 public class Evolution extends Observable implements Runnable {
 	
@@ -204,7 +203,7 @@ public class Evolution extends Observable implements Runnable {
 		crossover = new SinglePointCrossover();
 //		mutator = new SingleGeneMutation();
 		mutator = new MultiGenesMutation(Parameters.mutationRate);
-		insertion = new SimpleInsertion();
+		insertion = new RemoveWorseInsertion();
 		findBest = new FindBest();
 	}
 	
@@ -272,7 +271,6 @@ public class Evolution extends Observable implements Runnable {
 		for (int i = 0; i < runsNumber; i++) {
 			initialize();
 			List<Integer> stats = new ArrayList<Integer>();
-			
 			
 			while (running) {
 				List<Individual> parents = new ArrayList<Individual>();
