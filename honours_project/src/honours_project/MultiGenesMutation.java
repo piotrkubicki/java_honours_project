@@ -6,11 +6,9 @@ import java.util.List;
 public class MultiGenesMutation extends Operator {
 	
 	private double mutationRate;
-	private int chromosomeLength;
 	
-	public MultiGenesMutation(double mutationRate, int chromosomeLength) {
+	public MultiGenesMutation(double mutationRate) {
 		this.mutationRate = mutationRate;
-		this.chromosomeLength = chromosomeLength;
 	}
 	
 	@Override
@@ -23,11 +21,11 @@ public class MultiGenesMutation extends Operator {
 			List<Slot> slotsPermutation = ind.getSlotsPermutation();
 			List<Integer> eventsPermutation = ind.getEventsPermutation();
 			
-			for (int i = 0; i < chromosomeLength; i++) {
+			for (int i = 0; i < Evolution.eventsNumber; i++) {
 				double p = min = Evolution.randomGenerator.nextFloat() * (max - min);
 				
 				if (p < mutationRate) {
-					int index = Evolution.randomGenerator.nextInt(chromosomeLength);
+					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);
 					Slot temp = slotsPermutation.get(index);
 					slotsPermutation.set(index, slotsPermutation.get(i));
 					slotsPermutation.set(i, temp);
@@ -36,7 +34,7 @@ public class MultiGenesMutation extends Operator {
 				p = min = Evolution.randomGenerator.nextFloat() * (max - min);
 				
 				if (p < mutationRate) {
-					int index = Evolution.randomGenerator.nextInt(chromosomeLength);
+					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);
 					
 					Integer tempEvent = eventsPermutation.get(index);
 					eventsPermutation.set(index, eventsPermutation.get(i));
