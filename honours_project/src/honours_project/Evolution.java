@@ -390,6 +390,12 @@ public class Evolution extends Observable implements Runnable {
 			fw = new FileWriter(filename + ".csv");
 			int lineCounter = 0;
 			
+			for (int i = 0; i < results.size(); i++) {
+				fw.append(i + ",");
+			}
+			
+			fw.append("\n");
+			
 			while (true) {
 				String line = "";
 				int emptyColumns = 0;
