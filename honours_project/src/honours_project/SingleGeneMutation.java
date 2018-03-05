@@ -2,7 +2,6 @@ package honours_project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class SingleGeneMutation extends Operator {
 
@@ -15,8 +14,8 @@ public class SingleGeneMutation extends Operator {
 		for (Individual ind : individuals) {
 			List<Integer> permutation = ind.getPermutation();
 			
-			int index1 = Parameters.randomGenerator.nextInt(max);
-			int index2 = Parameters.randomGenerator.nextInt(max);
+			int index1 = Evolution.randomGenerator.nextInt(max);
+			int index2 = Evolution.randomGenerator.nextInt(max);
 			
 			int temp = permutation.get(index1);
 			permutation.set(index1, permutation.get(index2));

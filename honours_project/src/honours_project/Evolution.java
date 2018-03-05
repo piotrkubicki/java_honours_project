@@ -202,20 +202,11 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(Parameters.tournamentSize, Parameters.populationSize);
 		crossover = new SinglePointCrossover();
-		mutator = new SingleGeneMutation();
-//		mutator = new MultiGenesMutation(Parameters.mutationRate, EVENTS_NUMBER);
+//		mutator = new SingleGeneMutation();
+		mutator = new MultiGenesMutation(Parameters.mutationRate);
 		insertion = new SimpleInsertion();
 		findBest = new FindBest();
 	}
-//
-//	private void prepareSlotsMap() {
-//		for (Room room : Evolution.rooms) {
-//			for (int i = 0; i < Evolution.slotsNumber; i++) {
-//				List<Integer> suitableEvents = findEvents(room, events);
-//				slotsMap.put(Arrays.asList(room.getId(), i),suitableEvents);
-//			}
-//		}
-//	}
 	
 	public void stopEvolution() {
 		running = false;
@@ -330,46 +321,6 @@ public class Evolution extends Observable implements Runnable {
 				 
 			 }
 		}).start();
-	}
-
-	
-	private List<Integer> findEvents(Room room, List<Event> events) {
-		TreeMap<Integer, Integer> temp = new TreeMap<Integer, Integer>();
-		List<Integer> possibleEvents = new ArrayList<Integer>();
-		
-		for (Event event : events) {
-			boolean feasible = true;
-			int ff = 0;
-			
-			if (room.getSpaces() < event.getStudents().size()) {
-				feasible = false;
-			} else {
-				for (int i = 0; i < featuresNumber; i++) {
-					if (event.getFeatures().get(i) == 1 && room.getFeatures().get(i) == 0) {
-						feasible = false;
-						break;
-					}
-					
-					if (room.getFeatures().get(i) == 0 && room.getFeatures().get(i) == 1) {
-						ff++;
-					}
-				}
-			}
-			
-			if (feasible) {
-				while (temp.containsKey(ff)) {
-					ff++;
-				} 
-			
-				temp.put(ff, event.getId());
-			}
-		}
-		
-		for (Map.Entry<Integer, Integer> entry : temp.entrySet()) {
-			possibleEvents.add(entry.getValue());
-		}
-
-		return possibleEvents;
 	}
 	
 	private boolean saveStats(String filename) {
