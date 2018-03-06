@@ -200,10 +200,10 @@ public class Evolution extends Observable implements Runnable {
 
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(Parameters.tournamentSize, Parameters.populationSize);
-		crossover = new SinglePointCrossover();
-//		mutator = new SingleGeneMutation();
-		mutator = new MultiGenesMutation(Parameters.mutationRate);
-		insertion = new RemoveWorseInsertion();
+		crossover = new OrderBasedCrossover();
+//		mutator = new SingleSwapMutation();
+		mutator = new MultiSwapMutation();
+		insertion = new RandomInsertion();
 		findBest = new FindBest();
 	}
 	
@@ -280,7 +280,7 @@ public class Evolution extends Observable implements Runnable {
 				
 				List<Individual> childs = new ArrayList<Individual>();
 				childs.addAll(crossover.execute(parents));
-				mutator.execute(childs);
+				childs = mutator.execute(childs);
 				population.addAll(childs);
 				insertion.execute(population);
 				best = findBest.execute(population).get(0);
