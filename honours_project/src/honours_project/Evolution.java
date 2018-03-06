@@ -265,6 +265,8 @@ public class Evolution extends Observable implements Runnable {
 	private void starting() {
 		state = State.STARTING;
 		prepareData();
+
+		Individual.intiSlotsMap();
 		notifyAllObservers();
 		
 		for (int j = 0; j < Parameters.populationSize; j++) {

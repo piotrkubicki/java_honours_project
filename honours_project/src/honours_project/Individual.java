@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Individual {
+
+	public static Map<Integer, List<Slot>> slotsMap = new HashMap<>();
 	
 	private List<Room> rooms = new ArrayList<Room>();
 	private List<Slot> slotsPermutation;
@@ -274,6 +276,11 @@ public class Individual {
 						slot.setAllocatedEvent(event);
 						unplacedEvents.remove(eventId);
 						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), slot.getAllocatedEvent());
+						
+						if (!haveSlot(event, slot)) {
+							slotsMap.get(event.getId()).add(slot);
+						}
+						
 						found = true;
 						break;
 					}
@@ -295,6 +302,8 @@ public class Individual {
 				slotsPermutation.add(slot);
 			}
 		}
+		
+		allocateUnplacedEvents();
 	}
 	
 	// check for clashing students between selected event and events in other rooms within same time slot
@@ -379,5 +388,59 @@ public class Individual {
 				return false;
 			}
 		}
+	}
+	
+	public static void intiSlotsMap() {
+		for (int i = 0; i < Evolution.eventsNumber; i++) {
+			slotsMap.put(i, new ArrayList<>());
+//			System.out.println("SLOT: " + i);
+		}
+	}
+	
+	private boolean haveSlot(Event event, Slot slot) {
+		List<Slot> slots = slotsMap.get(event.getId());
+//		System.out.println(event.getId() + " " + slots);
+		
+		for (Slot s : slots) {
+			if (s.getRoomId() == slot.getRoomId() && s.getSlotId() == slot.getSlotId()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private void allocateUnplacedEvents() {
+		List<Event> temp = new ArrayList<>();
+		for (Event event : unplacedEvents.values()) {
+			for (Slot slot : slotsMap.get(event.getId())) {
+				Event oldEvent = rooms.get(slot.getRoomId()).getSlot(slot.getSlotId());
+				
+				if (oldEvent == null) {
+					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+					temp.add(event);
+				} 
+				else if (relocateEvent(oldEvent)) {
+					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+					temp.add(event);
+				}
+			}
+		}
+		
+		for (Event event : temp)
+			unplacedEvents.remove(event.getId());
+	}
+	
+	private boolean relocateEvent(Event event) {
+		System.out.println(event.getId());
+		for (Slot slot : slotsMap.get(event.getId())) {
+			if (rooms.get(slot.getRoomId()).getSlot(slot.getSlotId()) == null && studentsNoClash(event, slot.getSlotId())) {
+				rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
