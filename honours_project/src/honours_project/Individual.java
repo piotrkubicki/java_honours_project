@@ -374,14 +374,23 @@ public class Individual {
 		for (Event event : unplacedEvents) {
 			for (Slot slot : slotsMap.get(event.getId())) {
 				Event oldEvent = rooms.get(slot.getRoomId()).getSlot(slot.getSlotId());
+				rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), null);
 				
 				if (oldEvent == null) {
-					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
-					temp.add(event);
+					if (rooms.get(slot.getRoomId()).getSlot(slot.getSlotId()) == null && studentsNoClash(event, slot.getSlotId())) {
+						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+						temp.add(event);
+					}
 				} 
-				else if (relocateEvent(oldEvent)) {
-					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
-					temp.add(event);
+				else if (studentsNoClash(event, slot.getSlotId())) {
+					if (relocateEvent(oldEvent, slot)) {
+						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+						temp.add(event);
+					} else {
+						rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), oldEvent);
+					}
+				} else {
+					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), oldEvent);
 				}
 			}
 		}
@@ -390,13 +399,14 @@ public class Individual {
 			unplacedEvents.remove(event);
 	}
 	
-	private boolean relocateEvent(Event event) {
-		System.out.println(event.getId());
+	private boolean relocateEvent(Event event, Slot currentSlot) {
 		for (Slot slot : slotsMap.get(event.getId())) {
-			if (rooms.get(slot.getRoomId()).getSlot(slot.getSlotId()) == null && studentsNoClash(event, slot.getSlotId())) {
-				rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
-				
-				return true;
+			if (slot.getRoomId() != currentSlot.getRoomId() && slot.getSlotId() != currentSlot.getSlotId()) {
+				if (rooms.get(slot.getRoomId()).getSlot(slot.getSlotId()) == null && studentsNoClash(event, slot.getSlotId())) {
+					rooms.get(slot.getRoomId()).setSlot(slot.getSlotId(), event);
+					
+					return true;
+				}
 			}
 		}
 		
