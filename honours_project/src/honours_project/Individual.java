@@ -40,7 +40,7 @@ public class Individual {
 			eventsPermutation[i] = Evolution.events.get(i).getId();
 		}
 		shuffleArray(eventsPermutation);
-//		eventsPermutation = getHarderFirst(eventsPermutation);
+		eventsPermutation = getHarderFirst(eventsPermutation);
 		
 		evaluate();
 	}
@@ -55,7 +55,7 @@ public class Individual {
 			
 			rooms.add(room);
 		}
-				
+		
 		evaluate();
 	}
 	
@@ -256,10 +256,10 @@ public class Individual {
 		allocateUnplacedEvents();
 	}
 	
-	private List<Integer> getHarderFirst(List<Integer> permutation) {
+	private int[] getHarderFirst(int[] permutation) {
 		Hashtable<Integer, Integer> temp = new Hashtable<Integer, Integer>();
 		
-		List<Integer> result = new ArrayList<Integer>();
+		int[] result = new int[permutation.length];
 		
 		for (Integer i : permutation) {
 			int key = Evolution.events.get(i).getSuitableRooms().size();
@@ -281,10 +281,12 @@ public class Individual {
 		});
 		
 		Iterator i = t.iterator();
+		int counter = 0;
 		
 		while (i.hasNext()) {
 			Map.Entry tt = (Map.Entry) i.next();
-			result.add((Integer) tt.getKey());
+			result[counter] = ((Integer) tt.getKey());
+			counter++;
 		}
 		
 		return result;
@@ -377,8 +379,15 @@ public class Individual {
 	public static void intiSlotsMap() {
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
 			slotsMap.put(i, new ArrayList<>());
-//			System.out.println("SLOT: " + i);
 		}
+		
+//		for (Event event : Evolution.events) {
+//			for (Room room : event.getSuitableRooms()) {
+//				for (int i = 0; i < Evolution.slotsNumber; i++) {
+//					slotsMap.get(event.getId()).add(new Slot(room.getId(), i, null));
+//				}
+//			}
+//		}
 	}
 	
 	private boolean haveSlot(Event event, Slot slot) {

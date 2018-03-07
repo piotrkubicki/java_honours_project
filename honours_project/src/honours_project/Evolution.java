@@ -203,7 +203,7 @@ public class Evolution extends Observable implements Runnable {
 		crossover = new OrderBasedCrossover();
 //		mutator = new SingleSwapMutation();
 		mutator = new MultiSwapMutation();
-		insertion = new RandomInsertion();
+		insertion = new RemoveWorseInsertion();
 		findBest = new FindBest();
 	}
 	
