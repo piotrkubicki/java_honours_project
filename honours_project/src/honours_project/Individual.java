@@ -112,7 +112,7 @@ public class Individual {
 	}
 	
 	public void evaluate() {
-		createPhenotype();
+		build();
 		singleEvents();
 		endOfDayEvents();
 		moreThanThreeEvents();
@@ -210,7 +210,7 @@ public class Individual {
 		}
 	}
 	
-	public void createPhenotype() {
+	public void build() {
 		for (Integer eventId : eventsPermutation) {
 			Event event = Evolution.events.get(eventId);
 			boolean found = false;
@@ -376,23 +376,14 @@ public class Individual {
 		}
 	}
 	
-	public static void intiSlotsMap() {
+	public static void initSlotsMap() {
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
 			slotsMap.put(i, new ArrayList<>());
 		}
-		
-//		for (Event event : Evolution.events) {
-//			for (Room room : event.getSuitableRooms()) {
-//				for (int i = 0; i < Evolution.slotsNumber; i++) {
-//					slotsMap.get(event.getId()).add(new Slot(room.getId(), i, null));
-//				}
-//			}
-//		}
 	}
 	
 	private boolean haveSlot(Event event, Slot slot) {
 		List<Slot> slots = slotsMap.get(event.getId());
-//		System.out.println(event.getId() + " " + slots);
 		
 		for (Slot s : slots) {
 			if (s.getRoomId() == slot.getRoomId() && s.getSlotId() == slot.getSlotId()) {
@@ -432,7 +423,7 @@ public class Individual {
 		for (Event event : temp)
 			unplacedEvents.remove(event);
 	}
-	
+
 	private boolean relocateEvent(Event event, Slot currentSlot) {
 		for (Slot slot : slotsMap.get(event.getId())) {
 			if (slot.getRoomId() != currentSlot.getRoomId() && slot.getSlotId() != currentSlot.getSlotId()) {

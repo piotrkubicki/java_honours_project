@@ -12,7 +12,9 @@ public class RandomInsertion extends Operator {
 		while (individuals.size() > Parameters.populationSize) {
 			List<Individual> temp = new ArrayList<>(); 
 			
-			while (temp.size() < 5) {
+			int replacementRate = Evolution.randomGenerator.nextInt(Parameters.populationSize / 10) + 1;
+			
+			while (temp.size() < replacementRate) {
 				Individual worst = individuals.get(0);
 				
 				for (int i = 1; i < individuals.size(); i++) {
@@ -24,7 +26,7 @@ public class RandomInsertion extends Operator {
 				individuals.remove(worst);
 			}
 			
-			temp.remove(Evolution.randomGenerator.nextInt(5));
+			temp.remove(Evolution.randomGenerator.nextInt(replacementRate));
 			
 			for (Individual ind : temp)
 				individuals.add(ind);

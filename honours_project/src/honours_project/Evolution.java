@@ -204,6 +204,7 @@ public class Evolution extends Observable implements Runnable {
 //		mutator = new SingleSwapMutation();
 		mutator = new MultiSwapMutation();
 		insertion = new RemoveWorseInsertion();
+//		insertion = new RandomInsertion();
 		findBest = new FindBest();
 	}
 	
@@ -245,7 +246,7 @@ public class Evolution extends Observable implements Runnable {
 		state = State.STARTING;
 		prepareData();
 
-		Individual.intiSlotsMap();
+		Individual.initSlotsMap();
 		notifyAllObservers();
 		
 		for (int j = 0; j < Parameters.populationSize; j++) {
@@ -330,20 +331,32 @@ public class Evolution extends Observable implements Runnable {
 		try {
 			fw = new FileWriter(filename + ".csv");
 			int lineCounter = 0;
+			fw.append(",");
+			
+			for (int i = 0; i < results.size(); i++) {
+				fw.append(Integer.toString(i));
+				
+				if (i < (results.size() - 1))
+					fw.append(',');
+			}
+			
+			fw.append("\n");
 			
 			while (true) {
-				String line = "";
+				String line = ",";
 				int emptyColumns = 0;
 			
 				for (int i = 0; i < results.size(); i++) {
 					if (lineCounter >= results.get(i).size()) {
-						line += ",";
 						emptyColumns++;
 					} else {
 						if (results.get(i).get(lineCounter) != null) {
-							line += results.get(i).get(lineCounter).toString() + ',';
+							line += results.get(i).get(lineCounter).toString();
 						}
 					}
+					
+					if (i < (results.size() - 1))
+						line += ',';
 				}
 				
 				if (emptyColumns >= results.size()) {
