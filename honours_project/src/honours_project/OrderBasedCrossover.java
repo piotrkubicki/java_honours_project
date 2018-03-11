@@ -1,6 +1,7 @@
 package honours_project;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class OrderBasedCrossover extends Operator {
@@ -38,6 +39,8 @@ public class OrderBasedCrossover extends Operator {
 		}
 		
 		Individual child = new Individual(permutation);
+		child.costMap = new HashMap<>(parent1.costMap);
+		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child);
 		

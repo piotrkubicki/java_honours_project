@@ -1,6 +1,7 @@
 package honours_project;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MultiSwapMutation extends Operator {
@@ -13,23 +14,28 @@ public class MultiSwapMutation extends Operator {
 		int[] permutation = new int[Evolution.eventsNumber];
 		for (Individual ind : individuals) {
 			
-			
 			for (int i = 0 ; i < Evolution.eventsNumber; i++)
 				permutation[i] = ind.getPermutation()[i];
 			
 			for (int i = 0; i < Evolution.eventsNumber - 1; i++) {
 				double p = min = Evolution.randomGenerator.nextFloat() * (max - min);
-				
-				if (p < Parameters.mutationRate) {
+				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(i) / 1000f));
+//				System.out.println("New cost: " + newCost);
+				if (p < (newCost)) {
+					System.out.println("M: " + newCost);
 					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);
 					int temp = permutation[index];
 					permutation[index] = permutation[i];
 					permutation[i] = temp;
 				}
 			}
-
-			result.add(new Individual(permutation));
+			Individual child = new Individual(permutation);
+			child.costMap = new HashMap<>(ind.costMap);
+			child.evaluate();
+			
+			result.add(child);
 		}
+		System.out.println("---------------------------------------------");
 		
 		return result;
 	}

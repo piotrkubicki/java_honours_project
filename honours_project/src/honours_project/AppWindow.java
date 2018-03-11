@@ -302,7 +302,7 @@ public class AppWindow extends JFrame implements Observer {
 		
 		panel_7 = new JPanel();
 		panel_9.add(panel_7);
-		panel_7.setBorder(new TitledBorder(null, language.getStudents(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_7.setBorder(new TitledBorder(null, language.getEventCost(), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_7.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		scrollPane_1 = new JScrollPane();
@@ -437,15 +437,15 @@ public class AppWindow extends JFrame implements Observer {
 		}
 	}
 	
-	private void updateTimetables(List<Room> timetable) {
+	private void updateTimetables(Room[] timetable) {
 		
 		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			for (int j = 0; j < Evolution.slotsNumber; j++) {
-				Room room = (Room) timetable.get(i);
+				Room room = (Room) timetable[i];
 				Event event = room.getSlot(j);
 				if (event != null) {
 					timetableModel.setValueAt(event.getId(), i, j);
-					studentsTimetableModel.setValueAt(event.getStudents().size(), i, j);
+					studentsTimetableModel.setValueAt(evolution.best.costMap.get(event.getId()), i, j);
 				} else {
 					timetableModel.setValueAt(null, i, j);
 					studentsTimetableModel.setValueAt(null, i, j);

@@ -47,7 +47,7 @@ public class Evolution extends Observable implements Runnable {
 	private Operator insertion;
 	private Operator findBest;
 	
-	private Individual best = null;
+	public Individual best = null;
 	
 	private List<Individual> solutions = new ArrayList<Individual>();
 	private List<List<Integer>> results = new ArrayList<>();

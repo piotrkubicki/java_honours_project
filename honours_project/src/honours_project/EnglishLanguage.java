@@ -16,7 +16,7 @@ public class EnglishLanguage extends Language {
 	public static final String TITLE = "EA Timetabling";
 	public static final String POPULATION_SIZE = "Population size";
 	public static final String GENERATION = "Generation";
-	public static final String STUDENTS = "Students";
+	public static final String EVENT_COST = "Events Cost Map";
 	public static final String EVENTS = "Events";
 	public static final String FEASIBILITY = "Feasibility";
 	public static final String CLEAR = "Clear";
@@ -120,8 +120,8 @@ public class EnglishLanguage extends Language {
 	}
 
 	@Override
-	public String getStudents() {
-		return STUDENTS;
+	public String getEventCost() {
+		return EVENT_COST;
 	}
 
 	@Override

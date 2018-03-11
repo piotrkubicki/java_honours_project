@@ -1,11 +1,10 @@
 package honours_project;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
 	private int roomId;
-	private List<Event> slots = new ArrayList<Event>();
+	private Event[] slots = new Event[Evolution.slotsNumber];
 	private List<Integer> features;
 	private int spaces;
 	
@@ -25,7 +24,7 @@ public class Room {
 		return roomId;
 	}
 
-	public List<Event> getSlots() {
+	public Event[] getSlots() {
 		return slots;
 	}
 
@@ -38,7 +37,7 @@ public class Room {
 	}
 	
 	public void setSlot(int slot, Event event) {
-		slots.set(slot, event);
+		slots[slot] = event;
 	}
 	
 	public int getSpaces() {
@@ -50,14 +49,10 @@ public class Room {
 	}
 
 	public Event getSlot(int slot) {
-		return slots.get(slot);
+		return slots[slot];
 	}
 	
 	private void clearSlots() {
-		slots = new ArrayList<Event>();
-		
-		for (int i = 0; i < Evolution.slotsNumber; i++) {
-			slots.add(null);
-		}
+		slots = new Event[Evolution.slotsNumber];
 	}
 }
