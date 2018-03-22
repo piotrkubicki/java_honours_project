@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Room {
 	private int roomId;
-	private Event[] slots = new Event[Evolution.slotsNumber];
+	private Slot[] slots;
 	private List<Integer> features;
 	private int spaces;
 	
@@ -24,7 +24,7 @@ public class Room {
 		return roomId;
 	}
 
-	public Event[] getSlots() {
+	public Slot[] getSlots() {
 		return slots;
 	}
 
@@ -36,8 +36,8 @@ public class Room {
 		this.features = features;
 	}
 	
-	public void setSlot(int slot, Event event) {
-		slots[slot] = event;
+	public void setSlot(int index, Slot slot) {
+		slots[index] = slot;
 	}
 	
 	public int getSpaces() {
@@ -48,11 +48,15 @@ public class Room {
 		this.spaces = spaces;
 	}
 
-	public Event getSlot(int slot) {
+	public Slot getSlot(int slot) {
 		return slots[slot];
 	}
 	
 	private void clearSlots() {
-		slots = new Event[Evolution.slotsNumber];
+		slots = new Slot[Evolution.slotsNumber];
+		
+		for (int i = 0; i < Evolution.slotsNumber; i++) {
+			slots[i] = new Slot(roomId, i);
+		}
 	}
 }

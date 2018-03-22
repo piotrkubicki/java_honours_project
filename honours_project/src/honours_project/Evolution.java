@@ -5,10 +5,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class Evolution extends Observable implements Runnable {
 	
@@ -23,7 +26,6 @@ public class Evolution extends Observable implements Runnable {
 	public static int featuresNumber;
 	public static int studentsNumber;
 	public static int slotsNumber = 45;
-	public static int runsNumber = 1;
 	
 	public static State state = State.STOP;
 	
@@ -49,8 +51,8 @@ public class Evolution extends Observable implements Runnable {
 	
 	public Individual best = null;
 	
-	private List<Individual> solutions = new ArrayList<Individual>();
-	private List<List<Integer>> results = new ArrayList<>();
+	private List<Individual> bestTimetables = new ArrayList<Individual>();
+	private List<List<Double>> generationsFitnessTables = new ArrayList<>();
 	
 	private int generation;
 	
@@ -114,12 +116,14 @@ public class Evolution extends Observable implements Runnable {
 				line = br.readLine();
 				roomsSizes.add(Integer.parseInt(line));
 			}
-			
+			System.out.println("LAST LINE " + line);
 			begin = end;
 			end = begin + (studentsNumber * eventsNumber);
 			
 			for (int i = begin; i < end; i++) {
 				line = br.readLine();
+				if (i < 22)
+					System.out.println(line);
 				studentsData.add(Integer.parseInt(line));
 			}
 			
@@ -147,7 +151,6 @@ public class Evolution extends Observable implements Runnable {
 				for (int j = begin; j < end; j++) {
 					studentEvents.add(studentsData.get(j));
 				}
-				
 				studentsEvents.add(studentEvents);
 				begin += eventsNumber;
 			}
@@ -192,7 +195,6 @@ public class Evolution extends Observable implements Runnable {
 			for (int i = 0; i < eventsNumber; i++) {
 				events.add(new Event(i, eventsFeatures.get(i), rooms, students));
 			}
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,15 +214,15 @@ public class Evolution extends Observable implements Runnable {
 		running = false;
 	}
 	
-	public boolean saveSolution(String filename) {
+	public boolean save(String location) {
 		int i = 0;
 		
-		for (Individual solution : solutions) {
-			solution.saveSolution(filename + "_run_" + i);
+		for (Individual individual : bestTimetables) {
+			saveTimetable(individual, location + "_run_" + i);
 			i++;
 		}
 		
-		if (saveStats(filename + "_results")) {
+		if (saveStats(location + "_results")) {
 			return true;
 		} else {
 			return false;
@@ -245,13 +247,13 @@ public class Evolution extends Observable implements Runnable {
 	private void starting() {
 		state = State.STARTING;
 		prepareData();
-
-		Individual.initSlotsMap();
 		notifyAllObservers();
 		
 		for (int j = 0; j < Parameters.populationSize; j++) {
 			population.add(new Individual());
 		}
+		
+		best = findBest.execute(population).get(0);
 		
 		if (Parameters.runTime > 0)
 			startTimer();
@@ -271,17 +273,22 @@ public class Evolution extends Observable implements Runnable {
 	
 	public void run() {
 		
-		for (int i = 0; i < runsNumber; i++) {
+		for (int i = 0; i < Parameters.runsNumber; i++) {
 			initialize();
-			List<Integer> stats = new ArrayList<Integer>();
+			List<Double> bestFitnessGenerations = new ArrayList<Double>();
+			bestFitnessGenerations.add(best.getFitness());
 			
-			while (running) {
+			while (running && best.getFitness() > 0) {
 				List<Individual> parents = new ArrayList<Individual>();
 				parents.addAll(selector.execute(population)); // select parents
 				
 				List<Individual> childs = new ArrayList<Individual>();
 				childs.addAll(crossover.execute(parents));
 				childs = mutator.execute(childs);
+				
+				for (Individual child : childs)
+					child.evaluate();
+				
 				population.addAll(childs);
 				insertion.execute(population);
 				best = findBest.execute(population).get(0);
@@ -294,17 +301,21 @@ public class Evolution extends Observable implements Runnable {
 					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
 				}
 				
-				stats.add(best.getFitness());
+				bestFitnessGenerations.add(best.getFitness());
+				
+//				for (Individual ind : population) {
+//					for (int j = 0; j < Evolution.eventsNumber; j++) {
+//						System.out.print(ind.getPermutation()[j] + " ");
+//					}
+//					System.out.println();
+//				}
 			}
-			results.add(stats);
-			solutions.add(best);
+			
+			generationsFitnessTables.add(bestFitnessGenerations);
+			bestTimetables.add(best);
 		}
 		
 		stoping();
-	}
-	
-	public void setRunsNumber(int numberOfRuns) {
-		runsNumber = numberOfRuns;
 	}
 	
 	private void startTimer() {
@@ -333,10 +344,10 @@ public class Evolution extends Observable implements Runnable {
 			int lineCounter = 0;
 			fw.append(",");
 			
-			for (int i = 0; i < results.size(); i++) {
+			for (int i = 0; i < generationsFitnessTables.size(); i++) {
 				fw.append(Integer.toString(i));
 				
-				if (i < (results.size() - 1))
+				if (i < (generationsFitnessTables.size() - 1))
 					fw.append(',');
 			}
 			
@@ -346,20 +357,20 @@ public class Evolution extends Observable implements Runnable {
 				String line = ",";
 				int emptyColumns = 0;
 			
-				for (int i = 0; i < results.size(); i++) {
-					if (lineCounter >= results.get(i).size()) {
+				for (int i = 0; i < generationsFitnessTables.size(); i++) {
+					if (lineCounter >= generationsFitnessTables.get(i).size()) {
 						emptyColumns++;
 					} else {
-						if (results.get(i).get(lineCounter) != null) {
-							line += results.get(i).get(lineCounter).toString();
+						if (generationsFitnessTables.get(i).get(lineCounter) != null) {
+							line += generationsFitnessTables.get(i).get(lineCounter).toString();
 						}
 					}
 					
-					if (i < (results.size() - 1))
+					if (i < (generationsFitnessTables.size() - 1))
 						line += ',';
 				}
 				
-				if (emptyColumns >= results.size()) {
+				if (emptyColumns >= generationsFitnessTables.size()) {
 					break;
 				}
 				
@@ -387,8 +398,52 @@ public class Evolution extends Observable implements Runnable {
 		return true;
 	}
 	
+	public void saveTimetable(Individual individual, String filename) {
+		Map solution = new TreeMap<Integer, Integer[]>();
+		
+		for (int i = 0; i < Evolution.roomsNumber; i++) {
+			for (int j = 0; j < Evolution.slotsNumber; j++) {
+				Room room = individual.getRoom(i);
+				Event event = room.getSlot(j).getAllocatedEvent();
+				
+				if (event != null) {
+					Integer[] pair = {j, i};
+					solution.put(event.getId(), pair);
+				}
+			}
+		}
+		
+		FileWriter fw = null;
+		
+		try {
+			fw = new FileWriter(filename + ".sln");
+			
+			for (int i = 0; i < Evolution.eventsNumber; i++) {
+				Integer[] pair = (Integer[]) solution.get(i);
+				
+				if (pair != null) {
+					fw.append(String.valueOf(pair[0]) + " " + String.valueOf(pair[1]) + "\n");
+				} else {
+					fw.append("-1 -1\n");
+				}
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				fw.flush();
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void clear() {
-		solutions = new ArrayList<>();
-		results = new ArrayList<>();
+		bestTimetables = new ArrayList<>();
+		generationsFitnessTables = new ArrayList<>();
 	}
 }

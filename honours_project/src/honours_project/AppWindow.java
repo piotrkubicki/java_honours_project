@@ -1,5 +1,6 @@
 package honours_project;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -384,16 +385,12 @@ public class AppWindow extends JFrame implements Observer {
 		elapsedTime = 0;
 		
 		startTime();
-		
-		if (timetableModel == null) {
-			timetableModel = (DefaultTableModel) createTable();
-			eventsTable.setModel(timetableModel);
-		}
-		
-		if (studentsTimetableModel == null) {
-			studentsTimetableModel = (DefaultTableModel) createTable();
-			studentsTable.setModel(studentsTimetableModel);
-		}
+	
+		timetableModel = (DefaultTableModel) createTable();
+		eventsTable.setModel(timetableModel);
+
+		studentsTimetableModel = (DefaultTableModel) createTable();
+		studentsTable.setModel(studentsTimetableModel);
 		
 		addSeries();
 	}
@@ -438,14 +435,27 @@ public class AppWindow extends JFrame implements Observer {
 	}
 	
 	private void updateTimetables(Room[] timetable) {
+		int[][] p = new int[10][45];
+		p[0][5] = 1;
+		p[1][5] = 2;
+		p[2][5] = 3;
+		p[3][5] = 4;
+		p[4][5] = 5;
 		
 		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			for (int j = 0; j < Evolution.slotsNumber; j++) {
 				Room room = (Room) timetable[i];
-				Event event = room.getSlot(j);
+				Event event = room.getSlot(j).getAllocatedEvent();
 				if (event != null) {
 					timetableModel.setValueAt(event.getId(), i, j);
 					studentsTimetableModel.setValueAt(evolution.best.costMap.get(event.getId()), i, j);
+					studentsTable.getColumnModel().getColumn(j).setCellRenderer(new ColourCellRenderer(p));
+//					String t = "";
+//					for (Student s : event.getStudents()) {
+//						t += s.getStudentId() + " ";
+//					}
+//					
+//					studentsTimetableModel.setValueAt(t, i, j);
 				} else {
 					timetableModel.setValueAt(null, i, j);
 					studentsTimetableModel.setValueAt(null, i, j);
@@ -456,7 +466,7 @@ public class AppWindow extends JFrame implements Observer {
 	
 	private void updateLabels(Individual best) {
 		missedEventsTxt.setText(Integer.toString(best.unplacedEventsNumber()));
-		fitnessTxt.setText(Integer.toString(best.getFitness()));
+		fitnessTxt.setText(Double.toString(best.getFitness()));
 		singleTxt.setText(Integer.toString(best.getSingle()));
 		threeTxt.setText(Integer.toString(best.getThree()));
 		endTxt.setText(Integer.toString(best.getEnd()));
@@ -499,7 +509,7 @@ public class AppWindow extends JFrame implements Observer {
 					if (rVal == JFileChooser.APPROVE_OPTION) {
 						String filename = saveFile.getSelectedFile().getName();
 						String dir = saveFile.getCurrentDirectory().toString();
-						if (evolution.saveSolution(dir + "/" + filename)) {
+						if (evolution.save(dir + "/" + filename)) {
 							JOptionPane.showMessageDialog(null, language.getSuccessTitle(), language.getDone(), JOptionPane.INFORMATION_MESSAGE);
 						} else {
 							JOptionPane.showMessageDialog(null, language.getErrorTitle(), language.getErrorGeneric(), JOptionPane.ERROR_MESSAGE);
@@ -564,9 +574,9 @@ public class AppWindow extends JFrame implements Observer {
 						int time = 0;
 						
 						if (runsNumber.equals("")) {
-							evolution.setRunsNumber(1);
+							Parameters.runsNumber = 1;
 						} else {
-							evolution.setRunsNumber(Integer.parseInt(runsNumber));
+							Parameters.runsNumber = Integer.parseInt(runsNumber);
 						}
 						
 						if (!runTime.equals("")) {
@@ -592,7 +602,7 @@ public class AppWindow extends JFrame implements Observer {
 						Thread evolve = new Thread(evolution);
 						evolve.start();
 					} else if (startButton.getText() == language.getStop()) {
-						evolution.setRunsNumber(0);
+						Parameters.runsNumber = 0;
 						evolution.stopEvolution();
 						timer.stop();
 					}

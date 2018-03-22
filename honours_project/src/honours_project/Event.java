@@ -8,7 +8,7 @@ import java.util.TreeMap;
 public class Event {
 	private int eventId;
 	private List<Student> students = new ArrayList<Student>();
-	private List<Room> suitableRooms = new ArrayList<Room>(); 
+	private List<Integer> suitableRooms = new ArrayList<>(); 
 	
 	public Event(int eventId, List<Integer> features, List<Room> rooms, List<Student> students) {
 		this.eventId = eventId;
@@ -21,7 +21,7 @@ public class Event {
 		return eventId;
 	}
 	
-	public List<Room> getSuitableRooms() {
+	public List<Integer> getSuitableRooms() {
 		return suitableRooms;
 	}
 
@@ -58,13 +58,11 @@ public class Event {
 				} 
 				
 				temp.put(ff, room);
-//				suitableRooms.add(room);
-//				Collections.shuffle(suitableRooms);
 			}
 		}
 		
 		for (Map.Entry<Integer, Room> entry : temp.entrySet()) {
-			suitableRooms.add(entry.getValue());
+			suitableRooms.add(entry.getValue().getId());
 		}
 	}
 	
@@ -74,6 +72,9 @@ public class Event {
 			
 			if (studentEvents.get(eventId) == 1) {
 				students.add(student);
+				if (student.getStudentId() == 0) {
+					System.out.println(eventId + " have: " + student.getStudentId());
+				}
 			}
 		}
 	}

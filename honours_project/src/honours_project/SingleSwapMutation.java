@@ -24,7 +24,7 @@ public class SingleSwapMutation extends Operator {
 			permutation[index1] = permutation[index2];
 			permutation[index2] = temp;
 
-			result.add(new Individual(permutation));
+//			result.add(new Individual(permutation));
 		}
 		
 		return result;

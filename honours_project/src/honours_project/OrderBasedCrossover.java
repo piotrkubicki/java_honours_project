@@ -38,7 +38,30 @@ public class OrderBasedCrossover extends Operator {
 			k++;
 		}
 		
-		Individual child = new Individual(permutation);
+		Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];
+		Slot[] reservedEventsSlotsCopy = new Slot[Evolution.eventsNumber];
+		
+		for (int i = 0; i < Evolution.eventsNumber; i++) {
+			eventsSlotsCopy[i] = parent1.eventsSlots[i];
+			reservedEventsSlotsCopy[i] = parent2.eventsSlots[i];
+		}
+		
+		// move missed events in front
+		for (int i = 0; i < Evolution.eventsNumber; i++) {
+			for (int missed : parent1.unplacedEvents) {
+				if (permutation[i] == missed) {
+					int temp = permutation[i];
+					
+					for (int j = i; j > 0; j--) {
+						permutation[j] = permutation[j-1];
+					}
+					
+					permutation[0] = temp;
+				}
+			}
+		}
+		
+		Individual child = new Individual(permutation, eventsSlotsCopy, reservedEventsSlotsCopy);
 		child.costMap = new HashMap<>(parent1.costMap);
 		
 		List<Individual> result = new ArrayList<Individual>();
@@ -56,5 +79,4 @@ public class OrderBasedCrossover extends Operator {
 		
 		return false;
 	}
-
 }

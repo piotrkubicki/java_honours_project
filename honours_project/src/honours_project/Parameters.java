@@ -8,6 +8,7 @@ public class Parameters {
 	public static int tournamentSize;
 	public static double mutationRate;
 	public static long runTime = 0;
+	public static long runsNumber;
 	public static int populationSize;
 	
 	public static int getTournamentSize() {

@@ -6,19 +6,13 @@ public class Slot {
 	
 	private int roomId;
 	private int slotId;
-	private List<Integer> possibleEvents; //list of suitable events
-	private Event allocatedEvent;
+	private Event allocatedEvent = null;
 	
-	public Slot(int roomId, int slotId, List<Integer> events) {
+	public Slot(int roomId, int slotId) {
 		this.roomId = roomId;
 		this.slotId = slotId;
-		possibleEvents = events;
 	}
-
-	public List<Integer> getPossibleEvents() {
-		return possibleEvents;
-	}
-
+	
 	public int getRoomId() {
 		return roomId;
 	}
