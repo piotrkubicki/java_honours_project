@@ -14,31 +14,19 @@ public class MultiSwapMutation extends Operator {
 			
 			ind.evaluate();
 			
-			int[] permutation = new int[Evolution.eventsNumber];
-			Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];
-			Slot[] reservedEventsSlotsCopy = new Slot[Evolution.eventsNumber];
-			
-			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				eventsSlotsCopy[i] = ind.eventsSlots[i];
-				reservedEventsSlotsCopy[i] = ind.reservedEventsSlots[i];
-			}
+			Event[] permutation = new Event[Evolution.eventsNumber];
 			
 			for (int i = 0 ; i < Evolution.eventsNumber; i++) {
-				permutation[i] = ind.getPermutation()[i];
+				Event event = ind.getPermutation()[i];
+				permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
 			}
 			
-//			for (int eventId : permutation) {
-//				System.out.print(eventId + " ");
-//			}
-//			
-//			System.out.println();
-			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i]) / 1000f));
+				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
 				boolean found = false;
 				
 				if (Evolution.randomGenerator.nextFloat() < newCost) {
-					Event event = Evolution.events.get(permutation[i]);
+					Event event = permutation[i];
 					
 					for (int roomNumber : event.getSuitableRooms()) {
 						for (Slot slot : ind.getRooms()[roomNumber].getSlots()) {
@@ -46,26 +34,47 @@ public class MultiSwapMutation extends Operator {
 							if (ind.studentsNoClash(event, slot.getSlotId(), roomNumber)) {
 								if (slot.getAllocatedEvent() != null) {
 									Event tempEvent = slot.getAllocatedEvent();
+									tempEvent.setSlot(null);
 									
-									eventsSlotsCopy[tempEvent.getId()] = null;
+									if (event.getSlot() != null) {
+										Slot tempSlot = event.getSlot();
+										if (ind.studentsNoClash(tempEvent, tempSlot.getSlotId()	, tempSlot.getRoomId())) {
+											tempEvent.setSlot(new Slot(tempSlot.getRoomId(), tempSlot.getSlotId()));
+										}
+									}
 									
 									int index = -1;
 									
 									for (int k = 0; k < permutation.length; k++) {
-//										System.out.println(tempEvent.getId() + " " + permutation[k] + " " + k);
-										if (tempEvent.getId() == permutation[k]) {
+										if (tempEvent.getId() == permutation[k].getId()) {
 											index = k;
 											break;
 										}
 									}
 									
-//									permutation[index] = event.getId();
-//									permutation[i] = tempEvent.getId();
+									permutation[index] = event;
+									permutation[i] = tempEvent;
 								}
 								
-								eventsSlotsCopy[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
+								event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+								
+//								int index = -1;
+//								
+//								for (int k = 0; k < permutation.length; k++) {
+//									if (event.getId() == permutation[k].getId()) {
+//										index = k;
+//										break;
+//									}
+//								}
+//								
+//								for (int j = index; j > 0; j--) {
+//									permutation[j] = permutation[j-1];
+//								}
+//								
+//								permutation[0] = event;
 								
 								found = true;
+								break;
 							}
 						}
 						
@@ -75,7 +84,7 @@ public class MultiSwapMutation extends Operator {
 				}
 			}
 			
-			Individual child = new Individual(permutation, eventsSlotsCopy, reservedEventsSlotsCopy);
+			Individual child = new Individual(permutation);
 			child.costMap = new HashMap<>(ind.costMap);
 			result.add(child);
 		}

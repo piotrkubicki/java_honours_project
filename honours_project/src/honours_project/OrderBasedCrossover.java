@@ -20,13 +20,11 @@ public class OrderBasedCrossover extends Operator {
 		Individual parent1 = individuals.get(0);
 		Individual parent2 = individuals.get(1);
 
-		int[] permutation = new int[Evolution.eventsNumber];
-		
-		for (int i = 0; i < permutation.length; i++)
-			permutation[i] = -1;
+		Event[] permutation = new Event[Evolution.eventsNumber];
 		
 		for (int i = cutPoint1; i < cutPoint2; i++) {
-			permutation[i] = parent1.getPermutation()[i];
+			Event event = parent1.getPermutation()[i];
+			permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
 		}
 		
 		int k = cutPoint2;
@@ -40,28 +38,21 @@ public class OrderBasedCrossover extends Operator {
 				l = 0;
 			
 			if (!containValue(permutation, parent2.getPermutation()[l])) {
-				while (permutation[k] != -1)
+				while (permutation[k] != null)
 					k++;
 				
-				permutation[k] = parent2.getPermutation()[l];
+				Event event = parent2.getPermutation()[l];
+				permutation[k] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
 				k++;
 			}
 			l++;
 		}
 		
-		Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];
-		Slot[] reservedEventsSlotsCopy = new Slot[Evolution.eventsNumber];
-		
-		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			eventsSlotsCopy[i] = parent1.eventsSlots[i];
-			reservedEventsSlotsCopy[i] = parent2.eventsSlots[i];
-		}
-		
 		// move missed events in front
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
 			for (int missed : parent1.unplacedEvents) {
-				if (permutation[i] == missed) {
-					int temp = permutation[i];
+				if (permutation[i].getId() == missed) {
+					Event temp = permutation[i];
 					
 					for (int j = i; j > 0; j--) {
 						permutation[j] = permutation[j-1];
@@ -72,7 +63,7 @@ public class OrderBasedCrossover extends Operator {
 			}
 		}
 		
-		Individual child = new Individual(permutation, eventsSlotsCopy, reservedEventsSlotsCopy);
+		Individual child = new Individual(permutation);
 		child.costMap = new HashMap<>(parent1.costMap);
 		
 		List<Individual> result = new ArrayList<Individual>();
@@ -81,10 +72,12 @@ public class OrderBasedCrossover extends Operator {
 		return result;
 	}
 	
-	private boolean containValue(int[] permutation, int value) {
+	private boolean containValue(Event[] permutation, Event value) {
 		for (int i = 0; i < permutation.length; i++) {
-			if (permutation[i] == value) {
-				return true;
+			if (permutation[i] != null) {
+				if (permutation[i].getId() == value.getId()) {
+					return true;
+				}
 			}
 		}
 		

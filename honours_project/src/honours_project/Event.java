@@ -8,13 +8,27 @@ import java.util.TreeMap;
 public class Event {
 	private int eventId;
 	private List<Student> students = new ArrayList<Student>();
-	private List<Integer> suitableRooms = new ArrayList<>(); 
+	private List<Integer> suitableRooms = new ArrayList<>();
+	private Slot slot;
+	private Slot reserveSlot;
 	
 	public Event(int eventId, List<Integer> features, List<Room> rooms, List<Student> students) {
 		this.eventId = eventId;
 		
 		setStudents(students);
 		findRooms(features, rooms);
+	}
+	
+	public Event(int eventId, List<Integer> rooms, List<Student> students, Slot slot, Slot reserveSlot) {
+		this.eventId = eventId;
+		this.suitableRooms = rooms;
+		this.students = students;
+		
+		if (slot != null)
+			this.slot = new Slot(slot.getRoomId(), slot.getSlotId());
+		
+		if (reserveSlot != null)
+			this.reserveSlot = new Slot(reserveSlot.getRoomId(), slot.getSlotId());
 	}
 	
 	public int getId() {
@@ -29,6 +43,22 @@ public class Event {
 		return students;
 	}
 	
+	public Slot getSlot() {
+		return slot;
+	}
+
+	public void setSlot(Slot slot) {
+		this.slot = slot;
+	}
+
+	public Slot getReserveSlot() {
+		return reserveSlot;
+	}
+
+	public void setReserveSlot(Slot reserveSlot) {
+		this.reserveSlot = reserveSlot;
+	}
+
 	private void findRooms(List<Integer> features, List<Room> rooms) {
 		TreeMap<Integer, Room> temp = new TreeMap<Integer, Room>();
 		
@@ -72,9 +102,6 @@ public class Event {
 			
 			if (studentEvents.get(eventId) == 1) {
 				students.add(student);
-				if (student.getStudentId() == 0) {
-					System.out.println(eventId + " have: " + student.getStudentId());
-				}
 			}
 		}
 	}

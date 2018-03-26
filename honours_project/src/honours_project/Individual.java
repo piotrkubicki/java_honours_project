@@ -16,9 +16,7 @@ public class Individual {
 	public static Map<Integer, List<Slot>> slotsMap = new HashMap<>();
 
 	private Room[] rooms = new Room[Evolution.roomsNumber];
-	private int[] eventsPermutation = new int[Evolution.eventsNumber];
-	public Slot[] eventsSlots = new Slot[Evolution.eventsNumber];
-	public Slot[] reservedEventsSlots = new Slot[Evolution.eventsNumber];
+	private Event[] eventsPermutation = new Event[Evolution.eventsNumber];
 	public List<Integer> unplacedEvents = new ArrayList<>();
 	private double fitness = 0;
 	
@@ -38,7 +36,8 @@ public class Individual {
 		}
 
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			eventsPermutation[i] = Evolution.events.get(i).getId();
+			Event event = Evolution.events.get(i);
+			eventsPermutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
 		}
 		
 		shuffleArray(eventsPermutation);
@@ -50,31 +49,28 @@ public class Individual {
 	}
 
 
-	public Individual(int[] permutation, Slot[] slotsPermutation, Slot[] reservedSlotsPermutation) {
+	public Individual(Event[] permutation) {
 		
-		for (int i = 0; i < Evolution.eventsNumber; i++)
-			this.eventsPermutation[i] = permutation[i];
+		for (int i = 0; i < Evolution.eventsNumber; i++) {
+			Event event = permutation[i];
+			eventsPermutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
+		}
+		
 		// empty rooms
-
 		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room(i, null, Evolution.slotsNumber);
 			
 			rooms[i] = room;
 		}
 		
-		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			this.eventsSlots[i] = slotsPermutation[i];
-			this.reservedEventsSlots[i] = reservedSlotsPermutation[i];
-		}
-		
 		initCostMap();
 	}
 	
-	private void shuffleArray(int[] ar) {
+	private void shuffleArray(Event[] ar) {
 	    for (int i = ar.length - 1; i > 0; i--) {
 	      int index = Evolution.randomGenerator.nextInt(i + 1);
 	      
-	      int a = ar[index];
+	      Event a = ar[index];
 	      ar[index] = ar[i];
 	      ar[i] = a;
 	    }
@@ -96,11 +92,11 @@ public class Individual {
 		return three;
 	}
 
-	public int[] getPermutation() {
+	public Event[] getPermutation() {
 		return eventsPermutation;
 	}
 
-	public void setPermutation(int[] permutation) {
+	public void setPermutation(Event[] permutation) {
 		this.eventsPermutation = permutation;
 	}
 
@@ -257,18 +253,17 @@ public class Individual {
 		int[] columns = new int[Evolution.slotsNumber];
 		int[] rows = new int[Evolution.roomsNumber];
 		
-		for (Integer eventId : eventsPermutation) {
-			Event event = Evolution.events.get(eventId);
+		for (Event event : eventsPermutation) {
 			boolean found = false;
 			
-			Slot selectedSlot = eventsSlots[event.getId()];
+			Slot selectedSlot = event.getSlot();
 			
 			if (selectedSlot != null) {
 				Slot slot = rooms[selectedSlot.getRoomId()].getSlot(selectedSlot.getSlotId());
 				
 				if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
 					slot.setAllocatedEvent(event);
-					eventsSlots[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
+					event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 					found = true;
 					columns[slot.getSlotId()] += 1;
 					rows[slot.getRoomId()] += 1;
@@ -277,13 +272,13 @@ public class Individual {
 			} 
 			
 			if (found == false) {
-				selectedSlot = reservedEventsSlots[event.getId()];
+				selectedSlot = event.getReserveSlot();
 				if (selectedSlot != null) {
 					Slot slot = rooms[selectedSlot.getRoomId()].getSlot(selectedSlot.getSlotId());
 					
 					if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
 						slot.setAllocatedEvent(event);
-						eventsSlots[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
+						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 						found = true;
 						columns[slot.getSlotId()] += 1;
 						rows[slot.getRoomId()] += 1;
@@ -327,7 +322,7 @@ public class Individual {
 					found = true;
 					columns[best.getSlotId()] += 1;
 					rows[best.getRoomId()] += 1;
-					eventsSlots[event.getId()] = new Slot(best.getRoomId(), best.getSlotId());
+					event.setSlot(new Slot(best.getRoomId(), best.getSlotId()));
 //					System.out.println("FOUND");
 				}
 				
@@ -352,7 +347,7 @@ public class Individual {
 						found = true;
 						columns[best.getSlotId()] += 1;
 						rows[best.getRoomId()] += 1;
-						eventsSlots[event.getId()] = new Slot(best.getRoomId(), best.getSlotId());
+						event.setSlot(new Slot(best.getRoomId(), best.getSlotId()));
 //						System.out.println("END");
 					}
 				}
@@ -365,15 +360,15 @@ public class Individual {
 		}
 	}
 	
-	private int[] getHarderFirst(int[] permutation) {
-		Map<Integer, Integer> temp = new LinkedHashMap<Integer, Integer>();
+	private Event[] getHarderFirst(Event[] permutation) {
+		Map<Event, Integer> temp = new LinkedHashMap<>();
 		
-		int[] result = new int[permutation.length];
+		Event[] result = new Event[permutation.length];
 		
-		for (Integer i : permutation) {
-			int key = Evolution.events.get(i).getSuitableRooms().size();
+		for (Event event : permutation) {
+			int key = event.getSuitableRooms().size();
 			
-			temp.put(i, key);
+			temp.put(event, key);
 		}
 		
 		ArrayList t = new ArrayList(temp.entrySet());
@@ -394,7 +389,7 @@ public class Individual {
 		
 		while (i.hasNext()) {
 			Map.Entry tt = (Map.Entry) i.next();
-			result[counter] = ((Integer) tt.getKey());
+			result[counter] = ((Event) tt.getKey());
 			counter++;
 		}
 		
@@ -449,20 +444,13 @@ public class Individual {
 	}
 	
 	public Individual copy() {
-		int [] permutationCopy = new int[Evolution.eventsNumber];
+		Event[] permutationCopy = new Event[Evolution.eventsNumber];
 		
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			permutationCopy[i] = eventsPermutation[i];
+			Event event = eventsPermutation[i];
+			permutationCopy[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
 		}
 		
-		Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];
-		Slot[] reserveEventsSlotsCopy = new Slot[Evolution.eventsNumber];
-		
-		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			eventsSlotsCopy[i] = this.eventsSlots[i];
-			reserveEventsSlotsCopy[i] = this.reservedEventsSlots[i];
-		}
-		
-		return new Individual(permutationCopy, eventsSlotsCopy, reserveEventsSlotsCopy);
+		return new Individual(permutationCopy);
 	}
 }
