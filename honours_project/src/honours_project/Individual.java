@@ -27,9 +27,6 @@ public class Individual {
 	private int three = 0;
 	
 	public Map<Integer, Integer> costMap = new HashMap<>();
-	public Map<Slot, Integer> slotsCostMap = new HashMap<>();
-	
-	public List<Integer> temp = new ArrayList<>();
 	
 	public Individual() {
 		
@@ -48,14 +45,13 @@ public class Individual {
 		
 		eventsPermutation = getHarderFirst(eventsPermutation);
 		
-
 		initCostMap();
 		evaluate();
 	}
 
 
 	public Individual(int[] permutation, Slot[] slotsPermutation, Slot[] reservedSlotsPermutation) {
-		initCostMap();
+		
 		for (int i = 0; i < Evolution.eventsNumber; i++)
 			this.eventsPermutation[i] = permutation[i];
 		// empty rooms
@@ -71,6 +67,7 @@ public class Individual {
 			this.reservedEventsSlots[i] = reservedSlotsPermutation[i];
 		}
 		
+		initCostMap();
 	}
 	
 	private void shuffleArray(int[] ar) {
@@ -120,10 +117,12 @@ public class Individual {
 	}
 	
 	public void evaluate() {
-		
 		initCostMap();
 		build();
 		caclFitness();
+		
+		for (int event : unplacedEvents)
+			costMap.put(event, Parameters.missedEventCost);
 	}
 	
 	public void caclFitness() {
@@ -134,8 +133,7 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		int missedEventsPenalty = unplacedEvents.size() * 100;
-		fitness = (single) + end + three + missedEventsPenalty;
+		fitness = (single) + end + three + (unplacedEvents.size() * Parameters.missedEventCost);
 	}
 	
 	private void singleEvents() {
@@ -262,8 +260,6 @@ public class Individual {
 		for (Integer eventId : eventsPermutation) {
 			Event event = Evolution.events.get(eventId);
 			boolean found = false;
-			List<Slot> reservedSlots = new ArrayList<Slot>();
-			List<Slot> slots = new ArrayList<Slot>();
 			
 			Slot selectedSlot = eventsSlots[event.getId()];
 			
@@ -272,10 +268,11 @@ public class Individual {
 				
 				if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
 					slot.setAllocatedEvent(event);
-					eventsSlots[event.getId()] = slot;
+					eventsSlots[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
 					found = true;
 					columns[slot.getSlotId()] += 1;
 					rows[slot.getRoomId()] += 1;
+//					System.out.println("PARENT");
 				}
 			} 
 			
@@ -286,15 +283,19 @@ public class Individual {
 					
 					if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
 						slot.setAllocatedEvent(event);
-						eventsSlots[event.getId()] = slot;
+						eventsSlots[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
 						found = true;
 						columns[slot.getSlotId()] += 1;
 						rows[slot.getRoomId()] += 1;
+//						System.out.println("RESERVED");
 					}
 				}
 			}
 			
 			if (found == false) {
+				List<Slot> reservedSlots = new ArrayList<Slot>();
+				List<Slot> slots = new ArrayList<Slot>();
+				
 				for (int roomNumber : event.getSuitableRooms()) {
 					for (Slot slot : rooms[roomNumber].getSlots()) {
 						if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), roomNumber)) {
@@ -312,8 +313,8 @@ public class Individual {
 					if (best == null)
 						best = slot;
 					else {
-						int val = columns[best.getSlotId()];
-						int newVal = columns[slot.getSlotId()];
+						int val = columns[best.getSlotId()] + rows[best.getRoomId()];
+						int newVal = columns[slot.getSlotId()] + rows[best.getRoomId()];
 						
 						if (val > newVal) {
 							best = slot;
@@ -327,15 +328,18 @@ public class Individual {
 					columns[best.getSlotId()] += 1;
 					rows[best.getRoomId()] += 1;
 					eventsSlots[event.getId()] = new Slot(best.getRoomId(), best.getSlotId());
+//					System.out.println("FOUND");
 				}
+				
+				best = null;
 				
 				if (found == false) {
 					for (Slot slot : reservedSlots) {
 						if (best == null)
 							best = slot;
 						else {
-							int val = columns[best.getSlotId()];
-							int newVal = columns[slot.getSlotId()];
+							int val = columns[best.getSlotId()] + rows[best.getRoomId()];
+							int newVal = columns[slot.getSlotId()] + rows[best.getRoomId()];
 							
 							if (val > newVal) {
 								best = slot;
@@ -349,12 +353,14 @@ public class Individual {
 						columns[best.getSlotId()] += 1;
 						rows[best.getRoomId()] += 1;
 						eventsSlots[event.getId()] = new Slot(best.getRoomId(), best.getSlotId());
+//						System.out.println("END");
 					}
 				}
 			}
 			
 			if (found == false) {
 				unplacedEvents.add(event.getId());
+//				System.out.println("MISSED");
 			}
 		}
 	}

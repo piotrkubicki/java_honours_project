@@ -16,9 +16,10 @@ public class NTournamentSelect extends Operator {
 	@Override
 	public List<Individual> execute(List<Individual> population) {
 		List<Individual> selectedParents = new ArrayList<Individual>();
-		List<Individual> selected = new ArrayList<Individual>();
 		
 		for (int i = 0; i < 2; i++) {
+			List<Individual> selected = new ArrayList<Individual>();
+			
 			while (selected.size() < tournamentSize) {
 				selected.add(population.get(Evolution.randomGenerator.nextInt(populationSize)));
 			}

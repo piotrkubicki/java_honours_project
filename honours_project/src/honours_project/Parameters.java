@@ -10,6 +10,7 @@ public class Parameters {
 	public static long runTime = 0;
 	public static long runsNumber;
 	public static int populationSize;
+	public static int missedEventCost = 100;
 	
 	public static int getTournamentSize() {
 		return tournamentSize;

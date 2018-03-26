@@ -22,20 +22,31 @@ public class OrderBasedCrossover extends Operator {
 
 		int[] permutation = new int[Evolution.eventsNumber];
 		
+		for (int i = 0; i < permutation.length; i++)
+			permutation[i] = -1;
+		
 		for (int i = cutPoint1; i < cutPoint2; i++) {
 			permutation[i] = parent1.getPermutation()[i];
 		}
 		
 		int k = cutPoint2;
+		int l = k;
 		
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
 			if (k >= Evolution.eventsNumber)
 				k = 0;
 			
-			if (!containValue(permutation, parent2.getPermutation()[k])) {
-				permutation[k] = parent2.getPermutation()[k];
+			if (l >= Evolution.eventsNumber)
+				l = 0;
+			
+			if (!containValue(permutation, parent2.getPermutation()[l])) {
+				while (permutation[k] != -1)
+					k++;
+				
+				permutation[k] = parent2.getPermutation()[l];
+				k++;
 			}
-			k++;
+			l++;
 		}
 		
 		Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];

@@ -9,13 +9,12 @@ public class MultiSwapMutation extends Operator {
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
 		List<Individual> result = new ArrayList<Individual>();
-
-		int[] permutation = new int[Evolution.eventsNumber];
 		
 		for (Individual ind : individuals) {
 			
 			ind.evaluate();
 			
+			int[] permutation = new int[Evolution.eventsNumber];
 			Slot[] eventsSlotsCopy = new Slot[Evolution.eventsNumber];
 			Slot[] reservedEventsSlotsCopy = new Slot[Evolution.eventsNumber];
 			
@@ -26,31 +25,52 @@ public class MultiSwapMutation extends Operator {
 			
 			for (int i = 0 ; i < Evolution.eventsNumber; i++) {
 				permutation[i] = ind.getPermutation()[i];
-			}	
+			}
+			
+//			for (int eventId : permutation) {
+//				System.out.print(eventId + " ");
+//			}
+//			
+//			System.out.println();
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double p = Evolution.randomGenerator.nextFloat();
-				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(i) / 1000f));
-
-				if (p < newCost) {
+				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i]) / 1000f));
+				boolean found = false;
+				
+				if (Evolution.randomGenerator.nextFloat() < newCost) {
 					Event event = Evolution.events.get(permutation[i]);
 					
 					for (int roomNumber : event.getSuitableRooms()) {
 						for (Slot slot : ind.getRooms()[roomNumber].getSlots()) {
-							if (slot.getRoomId() != eventsSlotsCopy[i].getRoomId() && slot.getSlotId() != eventsSlotsCopy[i].getSlotId()) {
-								if (ind.studentsNoClash(event, slot.getSlotId(), roomNumber)) {
-									eventsSlotsCopy[event.getId()] = slot;
+						
+							if (ind.studentsNoClash(event, slot.getSlotId(), roomNumber)) {
+								if (slot.getAllocatedEvent() != null) {
+									Event tempEvent = slot.getAllocatedEvent();
 									
-									int temp = permutation[i];
+									eventsSlotsCopy[tempEvent.getId()] = null;
 									
-									for (int j = i; j > 0; j--) {
-										permutation[j] = permutation[j-1];
+									int index = -1;
+									
+									for (int k = 0; k < permutation.length; k++) {
+//										System.out.println(tempEvent.getId() + " " + permutation[k] + " " + k);
+										if (tempEvent.getId() == permutation[k]) {
+											index = k;
+											break;
+										}
 									}
 									
-									permutation[0] = temp;
+//									permutation[index] = event.getId();
+//									permutation[i] = tempEvent.getId();
 								}
+								
+								eventsSlotsCopy[event.getId()] = new Slot(slot.getRoomId(), slot.getSlotId());
+								
+								found = true;
 							}
 						}
+						
+						if (found == true)
+							break;
 					}
 				}
 			}
@@ -58,7 +78,6 @@ public class MultiSwapMutation extends Operator {
 			Individual child = new Individual(permutation, eventsSlotsCopy, reservedEventsSlotsCopy);
 			child.costMap = new HashMap<>(ind.costMap);
 			result.add(child);
-
 		}
 		
 		return result;
