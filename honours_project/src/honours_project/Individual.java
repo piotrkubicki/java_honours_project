@@ -24,6 +24,8 @@ public class Individual {
 	private int single = 0;
 	private int three = 0;
 	
+	public Operator mutator;
+	
 	public Map<Integer, Integer> costMap = new HashMap<>();
 	
 	public Individual() {

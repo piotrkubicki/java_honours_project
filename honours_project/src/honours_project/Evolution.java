@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -116,14 +116,13 @@ public class Evolution extends Observable implements Runnable {
 				line = br.readLine();
 				roomsSizes.add(Integer.parseInt(line));
 			}
-			System.out.println("LAST LINE " + line);
+			
 			begin = end;
 			end = begin + (studentsNumber * eventsNumber);
 			
 			for (int i = begin; i < end; i++) {
 				line = br.readLine();
-				if (i < 22)
-					System.out.println(line);
+				
 				studentsData.add(Integer.parseInt(line));
 			}
 			
@@ -203,8 +202,6 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(Parameters.tournamentSize, Parameters.populationSize);
 		crossover = new OrderBasedCrossover();
-//		mutator = new SingleSwapMutation();
-		mutator = new MultiSwapMutation();
 		insertion = new RemoveWorseInsertion();
 //		insertion = new RandomInsertion();
 		findBest = new FindBest();
@@ -284,12 +281,17 @@ public class Evolution extends Observable implements Runnable {
 				
 				List<Individual> childs = new ArrayList<Individual>();
 				childs.addAll(crossover.execute(parents));
-				childs = mutator.execute(childs);
+				List<Individual> mutatedChilds = new ArrayList<>();
 				
-				for (Individual child : childs)
+				for (Individual child : childs) {
+					mutator = child.mutator;
+					mutatedChilds.addAll(mutator.execute(Arrays.asList(child)));
+				}
+				
+				for (Individual child : mutatedChilds)
 					child.evaluate();
 				
-				population.addAll(childs);
+				population.addAll(mutatedChilds);
 				insertion.execute(population);
 				best = findBest.execute(population).get(0);
 				
@@ -297,9 +299,9 @@ public class Evolution extends Observable implements Runnable {
 	
 				notifyAllObservers();
 
-				for (Individual ind : childs) {
-					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
-				}
+//				for (Individual ind : childs) {
+//					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
+//				}
 				
 				bestFitnessGenerations.add(best.getFitness());
 				

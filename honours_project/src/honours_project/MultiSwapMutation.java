@@ -22,7 +22,7 @@ public class MultiSwapMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
+				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 100f));
 				boolean found = false;
 				
 				if (Evolution.randomGenerator.nextFloat() < newCost) {
@@ -38,8 +38,11 @@ public class MultiSwapMutation extends Operator {
 									
 									if (event.getSlot() != null) {
 										Slot tempSlot = event.getSlot();
-										if (ind.studentsNoClash(tempEvent, tempSlot.getSlotId()	, tempSlot.getRoomId())) {
-											tempEvent.setSlot(new Slot(tempSlot.getRoomId(), tempSlot.getSlotId()));
+										
+										if (tempEvent.getSuitableRooms().contains(tempSlot.getRoomId())) {
+											if (ind.studentsNoClash(tempEvent, tempSlot.getSlotId()	, tempSlot.getRoomId())) {
+												tempEvent.setSlot(new Slot(tempSlot.getRoomId(), tempSlot.getSlotId()));
+											}
 										}
 									}
 									
@@ -57,21 +60,6 @@ public class MultiSwapMutation extends Operator {
 								}
 								
 								event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
-								
-//								int index = -1;
-//								
-//								for (int k = 0; k < permutation.length; k++) {
-//									if (event.getId() == permutation[k].getId()) {
-//										index = k;
-//										break;
-//									}
-//								}
-//								
-//								for (int j = index; j > 0; j--) {
-//									permutation[j] = permutation[j-1];
-//								}
-//								
-//								permutation[0] = event;
 								
 								found = true;
 								break;

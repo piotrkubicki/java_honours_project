@@ -48,23 +48,29 @@ public class OrderBasedCrossover extends Operator {
 			l++;
 		}
 		
-		// move missed events in front
-		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			for (int missed : parent1.unplacedEvents) {
-				if (permutation[i].getId() == missed) {
-					Event temp = permutation[i];
-					
-					for (int j = i; j > 0; j--) {
-						permutation[j] = permutation[j-1];
-					}
-					
-					permutation[0] = temp;
-				}
-			}
-		}
-		
 		Individual child = new Individual(permutation);
 		child.costMap = new HashMap<>(parent1.costMap);
+		
+		//set mutator
+		
+		double chance = 0;
+		
+		if (parent1.mutator instanceof SingleSwapMutation) {
+			chance += 0.05;
+		} else {
+			chance -= 0.05;
+		}
+		
+//		if (parent2.mutator instanceof SingleSwapMutation) {
+//			chance += 0.05;
+//		} else {
+//			chance -= 0.05;
+//		}
+//		
+//		if (Evolution.randomGenerator.nextDouble() < 0.3 + chance)
+//			child.mutator = new SingleSwapMutation();
+//		else 
+			child.mutator = new MultiSwapMutation();
 		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child);
