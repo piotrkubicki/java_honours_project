@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SingleSwapMutation extends Operator {
+public class RandomSwapMutation extends Operator {
 
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
@@ -22,7 +22,7 @@ public class SingleSwapMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 100f));
+				double newCost = ( + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
 				
 				if (Evolution.randomGenerator.nextFloat() < newCost) {
 					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);
@@ -32,7 +32,9 @@ public class SingleSwapMutation extends Operator {
 					permutation[i] = temp;
 					
 					permutation[index].setSlot(null);
+					permutation[index].setReserveSlot(null);
 					permutation[i].setSlot(null);
+					permutation[i].setReserveSlot(null);
 				}
 			}
 			

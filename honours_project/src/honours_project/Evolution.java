@@ -46,6 +46,7 @@ public class Evolution extends Observable implements Runnable {
 	private Operator selector;
 	private Operator crossover;
 	private Operator mutator;
+	private Operator mutator2;
 	private Operator insertion;
 	private Operator findBest;
 	
@@ -202,6 +203,9 @@ public class Evolution extends Observable implements Runnable {
 		population = new ArrayList<Individual>();
 		selector = new NTournamentSelect(Parameters.tournamentSize, Parameters.populationSize);
 		crossover = new OrderBasedCrossover();
+//		crossover = new UniformCrossover();
+		mutator = new RandomSwapMutation();
+		mutator2 = new StealMutation();
 		insertion = new RemoveWorseInsertion();
 //		insertion = new RandomInsertion();
 		findBest = new FindBest();
@@ -290,7 +294,7 @@ public class Evolution extends Observable implements Runnable {
 				
 				for (Individual child : mutatedChilds)
 					child.evaluate();
-				
+
 				population.addAll(mutatedChilds);
 				insertion.execute(population);
 				best = findBest.execute(population).get(0);
@@ -299,7 +303,7 @@ public class Evolution extends Observable implements Runnable {
 	
 				notifyAllObservers();
 
-//				for (Individual ind : childs) {
+//				for (Individual ind : mutatedChilds) {
 //					System.out.println("UnEv: " + ind.unplacedEventsNumber() + " Fitness: " + ind.getFitness());
 //				}
 				
@@ -307,7 +311,7 @@ public class Evolution extends Observable implements Runnable {
 				
 //				for (Individual ind : population) {
 //					for (int j = 0; j < Evolution.eventsNumber; j++) {
-//						System.out.print(ind.getPermutation()[j] + " ");
+//						System.out.print(ind.getPermutation()[j].getId() + " ");
 //					}
 //					System.out.println();
 //				}

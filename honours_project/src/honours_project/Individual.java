@@ -218,10 +218,8 @@ public class Individual {
 					
 					if (occ > 2) {
 						three++;
-						
-						for (; k <= i; k++) {
-							calculateEventsCost(k, s);
-						}
+
+						calculateEventsCost(i, s);
 					}
 				}
 				

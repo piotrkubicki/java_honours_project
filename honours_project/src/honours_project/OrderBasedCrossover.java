@@ -24,7 +24,15 @@ public class OrderBasedCrossover extends Operator {
 		
 		for (int i = cutPoint1; i < cutPoint2; i++) {
 			Event event = parent1.getPermutation()[i];
-			permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
+			Event tempEvent = null;
+			
+			for (int j = 0; j < Evolution.eventsNumber; j++) {
+				if (parent2.getPermutation()[j].getId() == event.getId())
+					tempEvent = parent2.getPermutation()[j];
+			}
+			
+			
+			permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getReserveSlot());
 		}
 		
 		int k = cutPoint2;
@@ -42,7 +50,14 @@ public class OrderBasedCrossover extends Operator {
 					k++;
 				
 				Event event = parent2.getPermutation()[l];
-				permutation[k] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
+				Event tempEvent = null;
+				
+				for (int j = 0; j < Evolution.eventsNumber; j++) {
+					if (parent2.getPermutation()[j].getId() == event.getId())
+						tempEvent = parent2.getPermutation()[j];
+				}
+				
+				permutation[k] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getReserveSlot());
 				k++;
 			}
 			l++;
@@ -52,25 +67,10 @@ public class OrderBasedCrossover extends Operator {
 		child.costMap = new HashMap<>(parent1.costMap);
 		
 		//set mutator
-		
-		double chance = 0;
-		
-		if (parent1.mutator instanceof SingleSwapMutation) {
-			chance += 0.05;
-		} else {
-			chance -= 0.05;
-		}
-		
-//		if (parent2.mutator instanceof SingleSwapMutation) {
-//			chance += 0.05;
-//		} else {
-//			chance -= 0.05;
-//		}
-//		
-//		if (Evolution.randomGenerator.nextDouble() < 0.3 + chance)
-//			child.mutator = new SingleSwapMutation();
+//		if (Evolution.randomGenerator.nextDouble() < 0.5)
+			child.mutator = new RandomSwapMutation();
 //		else 
-			child.mutator = new MultiSwapMutation();
+//			child.mutator = new StealMutation();
 		
 		List<Individual> result = new ArrayList<Individual>();
 		result.add(child);
