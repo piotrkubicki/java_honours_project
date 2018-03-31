@@ -250,9 +250,6 @@ public class Individual {
 	}
 	
 	public void build() {
-		int[] columns = new int[Evolution.slotsNumber];
-		int[] rows = new int[Evolution.roomsNumber];
-		
 		for (Event event : eventsPermutation) {
 			boolean found = false;
 			
@@ -265,8 +262,6 @@ public class Individual {
 					slot.setAllocatedEvent(event);
 					event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 					found = true;
-					columns[slot.getSlotId()] += 1;
-					rows[slot.getRoomId()] += 1;
 //					System.out.println("PARENT");
 				}
 			} 
@@ -280,8 +275,6 @@ public class Individual {
 						slot.setAllocatedEvent(event);
 						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 						found = true;
-						columns[slot.getSlotId()] += 1;
-						rows[slot.getRoomId()] += 1;
 //						System.out.println("RESERVED");
 					}
 				}
@@ -303,52 +296,29 @@ public class Individual {
 					}
 				}
 				
-				Slot best = null;
-				for (Slot slot : slots) {
-					if (best == null)
-						best = slot;
-					else {
-						int val = columns[best.getSlotId()] + rows[best.getRoomId()];
-						int newVal = columns[slot.getSlotId()] + rows[best.getRoomId()];
-						
-						if (val > newVal) {
-							best = slot;
-						}
+				if (slots.isEmpty() == false) {
+					Slot slot = slots.remove(Evolution.randomGenerator.nextInt(slots.size()));
+					event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+					slot.setAllocatedEvent(event);
+					found = true;
+					
+					if (slots.isEmpty() == false) {
+						Slot rSlot = slots.remove(Evolution.randomGenerator.nextInt(slots.size()));
+						event.setReserveSlot(new Slot(rSlot.getRoomId(), rSlot.getSlotId()));
 					}
 				}
-				
-				if (best != null) {
-					best.setAllocatedEvent(event);
-					found = true;
-					columns[best.getSlotId()] += 1;
-					rows[best.getRoomId()] += 1;
-					event.setSlot(new Slot(best.getRoomId(), best.getSlotId()));
-//					System.out.println("FOUND");
-				}
-				
-				best = null;
 				
 				if (found == false) {
-					for (Slot slot : reservedSlots) {
-						if (best == null)
-							best = slot;
-						else {
-							int val = columns[best.getSlotId()] + rows[best.getRoomId()];
-							int newVal = columns[slot.getSlotId()] + rows[best.getRoomId()];
-							
-							if (val > newVal) {
-								best = slot;
-							}
-						}
-					}
-					
-					if (best != null) {
-						best.setAllocatedEvent(event);
+					if (reservedSlots.isEmpty() == false) {
+						Slot slot = reservedSlots.get(Evolution.randomGenerator.nextInt(reservedSlots.size()));
+						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+						slot.setAllocatedEvent(event);
 						found = true;
-						columns[best.getSlotId()] += 1;
-						rows[best.getRoomId()] += 1;
-						event.setSlot(new Slot(best.getRoomId(), best.getSlotId()));
-//						System.out.println("END");
+						
+						if (reservedSlots.isEmpty() == false) {
+							Slot rSlot = reservedSlots.remove(Evolution.randomGenerator.nextInt(reservedSlots.size()));
+							event.setReserveSlot(new Slot(rSlot.getRoomId(), rSlot.getSlotId()));
+						}
 					}
 				}
 			}

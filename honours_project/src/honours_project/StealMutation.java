@@ -63,6 +63,7 @@ public class StealMutation extends Operator {
 								} 
 
 								event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+								event.setReserveSlot(null);
 								
 								found = true;
 								break;

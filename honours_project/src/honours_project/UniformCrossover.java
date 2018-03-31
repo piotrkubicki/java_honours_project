@@ -52,7 +52,7 @@ public class UniformCrossover extends Operator {
 						
 						for (int j = 0; j < Evolution.eventsNumber; j++) {
 							if (parent2.getPermutation()[j].getId() == event.getId())
-								tempEvent = parent1.getPermutation()[j];
+								tempEvent = parent2.getPermutation()[j];
 						}
 						
 						permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());

@@ -22,9 +22,9 @@ public class RandomSwapMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-//				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 100f));
+				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
 				
-				if (Evolution.randomGenerator.nextFloat() < Parameters.mutationRate) {
+				if (Evolution.randomGenerator.nextFloat() < newCost) {
 					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);
 					Event temp = permutation[index];
 					
