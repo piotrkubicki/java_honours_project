@@ -26,7 +26,7 @@ public class UniformCrossover extends Operator {
 							tempEvent = parent2.getPermutation()[j];
 					}
 					
-					permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getReserveSlot());
+					permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());
 				}
 			} else {
 				if (containValue(permutation, parent2.getPermutation()[i]) == false) {
@@ -34,11 +34,11 @@ public class UniformCrossover extends Operator {
 					Event tempEvent = null;
 					
 					for (int j = 0; j < Evolution.eventsNumber; j++) {
-						if (parent2.getPermutation()[j].getId() == event.getId())
+						if (parent1.getPermutation()[j].getId() == event.getId())
 							tempEvent = parent1.getPermutation()[j];
 					}
 					
-					permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getReserveSlot());
+					permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());
 				}
 			}
 		}
@@ -48,7 +48,14 @@ public class UniformCrossover extends Operator {
 			if (permutation[i] == null) {
 				for (Event event : parent1.getPermutation()) {
 					if (containValue(permutation, event) == false) {
-						permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());
+						Event tempEvent = null;
+						
+						for (int j = 0; j < Evolution.eventsNumber; j++) {
+							if (parent2.getPermutation()[j].getId() == event.getId())
+								tempEvent = parent1.getPermutation()[j];
+						}
+						
+						permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());
 					}
 				}
 			}
@@ -58,7 +65,7 @@ public class UniformCrossover extends Operator {
 		child.costMap = new HashMap<>(parent1.costMap);
 		
 		//set mutator
-		if (Evolution.randomGenerator.nextDouble() < 0.7)
+		if (Evolution.randomGenerator.nextDouble() < 0.5)
 			child.mutator = new RandomSwapMutation();
 		else 
 			child.mutator = new StealMutation();

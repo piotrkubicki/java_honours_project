@@ -407,16 +407,10 @@ public class Evolution extends Observable implements Runnable {
 	public void saveTimetable(Individual individual, String filename) {
 		Map solution = new TreeMap<Integer, Integer[]>();
 		
-		for (int i = 0; i < Evolution.roomsNumber; i++) {
-			for (int j = 0; j < Evolution.slotsNumber; j++) {
-				Room room = individual.getRoom(i);
-				Event event = room.getSlot(j).getAllocatedEvent();
-				
-				if (event != null) {
-					Integer[] pair = {j, i};
-					solution.put(event.getId(), pair);
-				}
-			}
+		for (Event event : individual.getPermutation()) {
+			Slot slot = event.getSlot();
+			Integer[] pair = {slot.getSlotId(), slot.getRoomId()};
+			solution.put(event.getId(), pair);
 		}
 		
 		FileWriter fw = null;

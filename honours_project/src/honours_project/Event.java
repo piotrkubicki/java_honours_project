@@ -28,7 +28,7 @@ public class Event {
 			this.slot = new Slot(slot.getRoomId(), slot.getSlotId());
 		
 		if (reserveSlot != null)
-			this.reserveSlot = new Slot(reserveSlot.getRoomId(), slot.getSlotId());
+			this.reserveSlot = new Slot(reserveSlot.getRoomId(), reserveSlot.getSlotId());
 	}
 	
 	public int getId() {
