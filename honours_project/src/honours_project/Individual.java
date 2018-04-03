@@ -26,7 +26,7 @@ public class Individual {
 	
 	public Operator mutator;
 	
-	public Map<Integer, Integer> costMap = new HashMap<>();
+	public Map<Integer, Integer> penaltiesMap = new HashMap<>();
 	
 	public Individual() {
 		
@@ -120,7 +120,7 @@ public class Individual {
 		caclFitness();
 		
 		for (int event : unplacedEvents)
-			costMap.put(event, Parameters.missedEventCost);
+			penaltiesMap.put(event, Parameters.missedEventCost);
 	}
 	
 	public void caclFitness() {
@@ -180,7 +180,7 @@ public class Individual {
 				
 				if (event != null) {
 					end += event.getStudents().size();
-					costMap.put(event.getId(), event.getStudents().size());
+					penaltiesMap.put(event.getId(), event.getStudents().size());
 				}
 			}
 		}
@@ -207,11 +207,11 @@ public class Individual {
 				List<Integer> flatten = students.stream().flatMap(List::stream).collect(Collectors.toList());
 				Set<Integer> set = new HashSet<Integer>(flatten);
 				
-				int k = i - 2;
+//				int k = i - 2;
 				
-				while (k < 0) {
-					k++;
-				}
+//				while (k < 0) {
+//					k++;
+//				}
 				
 				for (Integer s : set) {
 					long occ = flatten.stream().filter(p -> p.equals(s)).count();
@@ -219,7 +219,8 @@ public class Individual {
 					if (occ > 2) {
 						three++;
 
-						calculateEventsCost(i, s);
+//						for (int l = 0; l < 2; l++)
+							calculateEventsCost(i, s);
 					}
 				}
 				
@@ -239,8 +240,8 @@ public class Individual {
 			if (event != null) {
 				for (Student student : event.getStudents()) {
 					if (student.getStudentId() == studentId) {
-						int cost = costMap.get(event.getId()) + 1;
-						costMap.put(event.getId(), cost);
+						int cost = penaltiesMap.get(event.getId()) + 1;
+						penaltiesMap.put(event.getId(), cost);
 								
 						break;
 					}
@@ -258,11 +259,13 @@ public class Individual {
 			if (selectedSlot != null) {
 				Slot slot = rooms[selectedSlot.getRoomId()].getSlot(selectedSlot.getSlotId());
 				
-				if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
-					slot.setAllocatedEvent(event);
-					event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
-					found = true;
-//					System.out.println("PARENT");
+				if (event.getSuitableRooms().contains(slot.getRoomId())) {
+					if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
+						slot.setAllocatedEvent(event);
+						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+						found = true;
+	//					System.out.println("PARENT");
+					}
 				}
 			} 
 			
@@ -271,13 +274,15 @@ public class Individual {
 				if (selectedSlot != null) {
 					Slot slot = rooms[selectedSlot.getRoomId()].getSlot(selectedSlot.getSlotId());
 					
-					if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
-						slot.setAllocatedEvent(event);
-						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
-						found = true;
-//						System.out.println("RESERVED");
+					if (event.getSuitableRooms().contains(slot.getRoomId())) {
+						if (slot.getAllocatedEvent() == null && studentsNoClash(event, slot.getSlotId(), slot.getRoomId())) {
+							slot.setAllocatedEvent(event);
+							event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+							found = true;
+	//						System.out.println("RESERVED");
+						}
 					}
-				}
+				} 
 			}
 			
 			if (found == false) {
@@ -409,7 +414,7 @@ public class Individual {
 	
 	private void initCostMap() {
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
-			costMap.put(i, 0);
+			penaltiesMap.put(i, 0);
 		}
 	}
 	

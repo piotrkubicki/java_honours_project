@@ -22,9 +22,9 @@ public class StealMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
+				double mutationRate = (Parameters.mutationRate + ((double) ind.penaltiesMap.get(permutation[i].getId()) / 1000f));
 				
-				if (Evolution.randomGenerator.nextFloat() < newCost) {
+				if (Evolution.randomGenerator.nextFloat() < mutationRate) {
 					Event event = permutation[i];
 					List<Slot> slots = new ArrayList<>();
 					
@@ -85,7 +85,7 @@ public class StealMutation extends Operator {
 			}
 			
 			Individual child = new Individual(permutation);
-			child.costMap = new HashMap<>(ind.costMap);
+			child.penaltiesMap = new HashMap<>(ind.penaltiesMap);
 			result.add(child);
 		}
 		

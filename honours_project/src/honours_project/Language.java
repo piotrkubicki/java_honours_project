@@ -28,6 +28,8 @@ public abstract class Language {
 	// MESSAGES TITLES
 	public abstract String getErrorTitle();
 	public abstract String getSuccessTitle();
+	public abstract String getChartTitle();
+	public abstract String getPenaltyPoints();
 	
 	//MESSAGES BODY
 	public abstract String getNoFileError();

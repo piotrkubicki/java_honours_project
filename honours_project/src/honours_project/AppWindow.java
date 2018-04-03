@@ -359,7 +359,7 @@ public class AppWindow extends JFrame implements Observer {
 
 	private JFreeChart createChart() {
 		dataset = new XYSeriesCollection();
-		JFreeChart chart = ChartFactory.createXYLineChart(language.getFeasibility(), language.getGeneration(), language.getFeasibility(), dataset);
+		JFreeChart chart = ChartFactory.createXYLineChart(language.getChartTitle(), language.getGeneration(), language.getPenaltyPoints(), dataset);
 		XYPlot plot = chart.getXYPlot();
 		NumberAxis xAxis = new NumberAxis();
 		plot.setDomainAxis(xAxis);
@@ -448,7 +448,7 @@ public class AppWindow extends JFrame implements Observer {
 				Event event = room.getSlot(j).getAllocatedEvent();
 				if (event != null) {
 					timetableModel.setValueAt(event.getId(), i, j);
-					studentsTimetableModel.setValueAt(evolution.best.costMap.get(event.getId()), i, j);
+					studentsTimetableModel.setValueAt(evolution.best.penaltiesMap.get(event.getId()), i, j);
 					studentsTable.getColumnModel().getColumn(j).setCellRenderer(new ColourCellRenderer(p));
 //					String t = "";
 //					for (Student s : event.getStudents()) {

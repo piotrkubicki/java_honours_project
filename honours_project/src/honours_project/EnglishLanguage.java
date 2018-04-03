@@ -16,7 +16,7 @@ public class EnglishLanguage extends Language {
 	public static final String TITLE = "EA Timetabling";
 	public static final String POPULATION_SIZE = "Population size";
 	public static final String GENERATION = "Generation";
-	public static final String EVENT_COST = "Events Cost Map";
+	public static final String EVENT_COST = "Events Penalties Map";
 	public static final String EVENTS = "Events";
 	public static final String FEASIBILITY = "Feasibility";
 	public static final String CLEAR = "Clear";
@@ -27,6 +27,8 @@ public class EnglishLanguage extends Language {
 	// MESSAGE TITLES
 	public static final String ERROR_MESSAGE_TITLE = "Error";
 	public static final String SUCCESS_MESSAGE_TITLE = "Success";
+	public static final String CHART_TITLE = "Timetable Feasibility";
+	public static final String PENALTY_POINTS = "Penalty points";
 	
 	// MESSAGE BODY
 	public static final String NO_FILE_ERROR = "Please select problem file!";
@@ -177,5 +179,15 @@ public class EnglishLanguage extends Language {
 	@Override
 	public String getErrorGeneric() {
 		return ERROR_GENERIC;
+	}
+
+	@Override
+	public String getChartTitle() {
+		return CHART_TITLE;
+	}
+
+	@Override
+	public String getPenaltyPoints() {
+		return PENALTY_POINTS;
 	}
 }

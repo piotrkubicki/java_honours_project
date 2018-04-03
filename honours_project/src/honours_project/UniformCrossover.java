@@ -62,7 +62,7 @@ public class UniformCrossover extends Operator {
 		}
 		
 		Individual child = new Individual(permutation);
-		child.costMap = new HashMap<>(parent1.costMap);
+		child.penaltiesMap = new HashMap<>(parent1.penaltiesMap);
 		
 		//set mutator
 		if (Evolution.randomGenerator.nextDouble() < 0.5)

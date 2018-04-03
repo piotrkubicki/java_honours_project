@@ -31,7 +31,7 @@ public class OrderBasedCrossover extends Operator {
 					tempEvent = parent2.getPermutation()[j];
 			}
 			
-			
+//			System.out.println("EVENT: " + event.getId() + " TEMP: " + tempEvent.getId());
 			permutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());
 		}
 		
@@ -53,8 +53,8 @@ public class OrderBasedCrossover extends Operator {
 				Event tempEvent = null;
 				
 				for (int j = 0; j < Evolution.eventsNumber; j++) {
-					if (parent2.getPermutation()[j].getId() == event.getId())
-						tempEvent = parent2.getPermutation()[j];
+					if (parent1.getPermutation()[j].getId() == event.getId())
+						tempEvent = parent1.getPermutation()[j];
 				}
 				
 				permutation[k] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), tempEvent.getSlot());
@@ -64,7 +64,7 @@ public class OrderBasedCrossover extends Operator {
 		}
 		
 		Individual child = new Individual(permutation);
-		child.costMap = new HashMap<>(parent1.costMap);
+		child.penaltiesMap = new HashMap<>(parent1.penaltiesMap);
 		
 		//set mutator
 		if (Evolution.randomGenerator.nextDouble() < 0.5)
