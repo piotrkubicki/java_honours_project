@@ -23,10 +23,10 @@ public class StealMutation extends Operator {
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
 				double newCost = (Parameters.mutationRate + ((double) ind.costMap.get(permutation[i].getId()) / 1000f));
-				boolean found = false;
 				
 				if (Evolution.randomGenerator.nextFloat() < newCost) {
 					Event event = permutation[i];
+					List<Slot> slots = new ArrayList<>();
 					
 					for (int roomNumber : event.getSuitableRooms()) {
 						for (Slot slot : ind.getRooms()[roomNumber].getSlots()) {
@@ -37,41 +37,49 @@ public class StealMutation extends Operator {
 									if (slot.getRoomId() == tempSlot.getRoomId() && slot.getSlotId() == tempSlot.getSlotId()) {
 										continue; // skip if same slot
 									} else {
-										if (slot.getAllocatedEvent() != null) {
-											Event tempEvent = slot.getAllocatedEvent();
-											tempEvent.setSlot(null);
-											
-											if (tempEvent.getSuitableRooms().contains(tempSlot.getRoomId())) {
-												if (ind.studentsNoClash(tempEvent, tempSlot.getSlotId()	, tempSlot.getRoomId())) {
-													tempEvent.setSlot(new Slot(tempSlot.getRoomId(), tempSlot.getSlotId()));
-												}
-											}
-											
-											int index = -1;
-											
-											for (int k = 0; k < permutation.length; k++) {
-												if (tempEvent.getId() == permutation[k].getId()) {
-													index = k;
-													break;
-												}
-											}
-											
-											permutation[index] = event;
-											permutation[i] = tempEvent;
-										}
+										slots.add(slot);
 									}
 								} 
-
-								event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
-								event.setReserveSlot(null);
-								
-								found = true;
-								break;
 							}
 						}
+					}
+					
+					if (slots.isEmpty() == false) {
+						Slot slot = slots.remove(Evolution.randomGenerator.nextInt(slots.size()));
+					
+						if (slot.getAllocatedEvent() != null) {
+							Event tempEvent = slot.getAllocatedEvent();
+							tempEvent.setSlot(null);
+							
+							Slot tempSlot = event.getSlot();
+							
+							if (tempSlot != null) {
+								if (tempEvent.getSuitableRooms().contains(tempSlot.getRoomId())) {
+									if (ind.studentsNoClash(tempEvent, tempSlot.getSlotId()	, tempSlot.getRoomId())) {
+										tempEvent.setSlot(new Slot(tempSlot.getRoomId(), tempSlot.getSlotId()));
+									}
+								}
+							}
+							
+							int index = -1;
+							
+							for (int k = 0; k < permutation.length; k++) {
+								if (tempEvent.getId() == permutation[k].getId()) {
+									index = k;
+									break;
+								}
+							}
+							
+							permutation[index] = event;
+							permutation[i] = tempEvent;
+						}
 						
-						if (found == true)
-							break;
+						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
+						
+						if (slots.isEmpty() == false) {
+							Slot rSlot = slots.remove(Evolution.randomGenerator.nextInt(slots.size()));
+							event.setReserveSlot(new Slot(rSlot.getRoomId(), rSlot.getSlotId()));
+						}
 					}
 				}
 			}
