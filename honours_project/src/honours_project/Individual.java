@@ -261,7 +261,6 @@ public class Individual {
 						slot.setAllocatedEvent(event);
 						event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 						found = true;
-	//					System.out.println("PARENT");
 					}
 				}
 			} 
@@ -276,7 +275,6 @@ public class Individual {
 							slot.setAllocatedEvent(event);
 							event.setSlot(new Slot(slot.getRoomId(), slot.getSlotId()));
 							found = true;
-	//						System.out.println("RESERVED");
 						}
 					}
 				} 
@@ -327,7 +325,6 @@ public class Individual {
 			
 			if (found == false) {
 				unplacedEvents.add(event.getId());
-//				System.out.println("MISSED");
 			}
 		}
 	}
