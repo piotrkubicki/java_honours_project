@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StealMutation extends Operator {
+	private double mutationRate;
 	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
@@ -22,7 +23,11 @@ public class StealMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double mutationRate = (Parameters.mutationRate + ((double) ind.penaltiesMap.get(permutation[i].getId()) / 1000f));
+				if (Parameters.withPenalties == true) {
+					mutationRate = (Parameters.mutationRate + ((double) ind.penaltiesMap.get(permutation[i].getId()) / 1000f));
+				} else { 
+					mutationRate = Parameters.mutationRate;
+				}
 				
 				if (Evolution.randomGenerator.nextFloat() < mutationRate) {
 					Event event = permutation[i];

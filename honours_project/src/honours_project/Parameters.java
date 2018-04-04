@@ -11,6 +11,7 @@ public class Parameters {
 	public static long runsNumber;
 	public static int populationSize;
 	public static int missedEventCost = 100;
+	public static boolean withPenalties = true;
 	
 	public static int getTournamentSize() {
 		return tournamentSize;

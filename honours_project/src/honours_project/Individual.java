@@ -25,11 +25,9 @@ public class Individual {
 	private int three = 0;
 	
 	public Operator mutator;
-	
 	public Map<Integer, Integer> penaltiesMap = new HashMap<>();
 	
 	public Individual() {
-		
 		// empty rooms
 		for (int i = 0; i < Evolution.roomsNumber; i++) {
 			Room room = new Room(i, null, Evolution.slotsNumber);
@@ -52,7 +50,6 @@ public class Individual {
 
 
 	public Individual(Event[] permutation) {
-		
 		for (int i = 0; i < Evolution.eventsNumber; i++) {
 			Event event = permutation[i];
 			eventsPermutation[i] = new Event(event.getId(), event.getSuitableRooms(), event.getStudents(), event.getSlot(), event.getReserveSlot());

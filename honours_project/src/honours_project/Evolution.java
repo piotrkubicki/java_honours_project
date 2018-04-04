@@ -204,7 +204,7 @@ public class Evolution extends Observable implements Runnable {
 		selector = new NTournamentSelect(Parameters.tournamentSize, Parameters.populationSize);
 		crossover = new OrderBasedCrossover();
 //		crossover = new UniformCrossover();
-		mutator = new RandomSwapMutation();
+		mutator = new RandomResetMutation();
 		mutator2 = new StealMutation();
 		insertion = new RemoveWorseInsertion();
 //		insertion = new RandomInsertion();

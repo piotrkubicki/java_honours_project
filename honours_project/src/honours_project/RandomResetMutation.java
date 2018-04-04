@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RandomSwapMutation extends Operator {
-
+public class RandomResetMutation extends Operator {
+	private double mutationRate;
+	
 	@Override
 	public List<Individual> execute(List<Individual> individuals) {
+		
 
 		List<Individual> result = new ArrayList<Individual>();
 		
@@ -22,7 +24,11 @@ public class RandomSwapMutation extends Operator {
 			}
 			
 			for (int i = 0; i < Evolution.eventsNumber; i++) {
-				double mutationRate = (Parameters.mutationRate + ((double) ind.penaltiesMap.get(permutation[i].getId()) / 1000f));
+				if (Parameters.withPenalties == true) {
+					mutationRate = (Parameters.mutationRate + ((double) ind.penaltiesMap.get(permutation[i].getId()) / 1000f));
+				} else { 
+					mutationRate = Parameters.mutationRate;
+				}
 				
 				if (Evolution.randomGenerator.nextFloat() < mutationRate) {
 					int index = Evolution.randomGenerator.nextInt(Evolution.eventsNumber);

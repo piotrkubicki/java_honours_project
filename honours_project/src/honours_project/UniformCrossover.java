@@ -66,7 +66,7 @@ public class UniformCrossover extends Operator {
 		
 		//set mutator
 		if (Evolution.randomGenerator.nextDouble() < 0.5)
-			child.mutator = new RandomSwapMutation();
+			child.mutator = new RandomResetMutation();
 		else 
 			child.mutator = new StealMutation();
 		
