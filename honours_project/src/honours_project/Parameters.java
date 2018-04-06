@@ -8,9 +8,9 @@ public class Parameters {
 	public static int tournamentSize;
 	public static double mutationRate;
 	public static long runTime = 0;
-	public static long runsNumber;
+	public static long runsNumber = 1;
 	public static int populationSize;
-	public static int missedEventCost = 100;
+	public static int missedEventPenalty = 100;
 	public static boolean withPenalties = true;
 	
 	public static int getTournamentSize() {

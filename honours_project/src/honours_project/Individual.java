@@ -117,7 +117,7 @@ public class Individual {
 		caclFitness();
 		
 		for (int event : unplacedEvents)
-			penaltiesMap.put(event, Parameters.missedEventCost);
+			penaltiesMap.put(event, Parameters.missedEventPenalty);
 	}
 	
 	public void caclFitness() {
@@ -128,7 +128,7 @@ public class Individual {
 		endOfDayEvents();
 		moreThanThreeEvents();
 		
-		fitness = (single) + end + three + (unplacedEvents.size() * Parameters.missedEventCost);
+		fitness = (single) + end + three + (unplacedEvents.size() * Parameters.missedEventPenalty);
 	}
 	
 	private void singleEvents() {
